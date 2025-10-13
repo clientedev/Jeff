@@ -1,4 +1,4 @@
-# Sistema SRI SENAI 1.03
+# Sistema SRI SENAI 2.0 - Plataforma Completa de Gestão Industrial
 
 ## Visão Geral
 Sistema web completo de Serviço de Relacionamento com a Indústria (SRI) do SENAI, desenvolvido em Python Flask com PostgreSQL. O sistema permite gestão de empresas, visitas técnicas, demandas/oportunidades, com controle de permissões, relatórios e auditoria.
@@ -131,8 +131,76 @@ O sistema já está configurado e rodando automaticamente via workflow:
 7. Mapa de calor de visitas (Google Maps)
 8. Backup automático do banco
 
+## Expansão Planejada - Versão 2.0
+
+### ✅ Novos Módulos Implementados (Base):
+
+1. **Banco de Dados Expandido**:
+   - ✅ Modelo de Inovações/Lean Manufacturing (15 ferramentas pré-cadastradas)
+   - ✅ Modelo de Atribuição de Inovações a Empresas com tracking
+   - ✅ Modelo de Formulários Dinâmicos (captura de dados externos)
+   - ✅ Modelo de Diagnósticos e Melhorias (para consultores)
+   - ✅ Modelo de Automações (emails/SMS)
+   - ✅ Perfil de Consultor adicionado ao modelo User
+
+2. **Ferramentas Lean Manufacturing Disponíveis**:
+   - 5S, Kaizen, Kanban, Poka-Yoke
+   - TPM, VSM, SMED, Trabalho Padronizado
+   - Gestão Visual, Células de Manufatura
+   - Six Sigma, Jidoka, Heijunka, Andon, Gemba Walk
+
+### 🚧 Em Desenvolvimento (Próximas Fases):
+
+**Fase 1 - Gestão de Inovações** (Próxima):
+- [ ] Rotas CRUD para Inovações Lean
+- [ ] Sistema de atribuição de inovações às empresas
+- [ ] Dashboard de acompanhamento de implementações
+- [ ] Gráficos de progresso por empresa e ferramenta
+
+**Fase 2 - Consultores e Diagnósticos**:
+- [ ] Área administrativa de consultores
+- [ ] Login e dashboard específico para consultores
+- [ ] Sistema de diagnósticos empresariais
+- [ ] Relatórios de melhorias com scoring
+- [ ] Integração diagnósticos → inovações
+
+**Fase 3 - Formulários Dinâmicos**:
+- [ ] Gerador de formulários customizados
+- [ ] Sistema de links únicos para clientes
+- [ ] Captura automática de dados no sistema
+- [ ] Alimentação automática do perfil da empresa
+
+**Fase 4 - Importação de Dados**:
+- [ ] Upload e importação de empresas via Excel
+- [ ] Importação de visitas via Excel
+- [ ] Importação de demandas via Excel
+- [ ] Validação e tratamento de erros
+
+**Fase 5 - Carteira de Clientes**:
+- [ ] Visualização de carteira por consultor
+- [ ] Indicadores de engajamento
+- [ ] Histórico completo de interações
+- [ ] Timeline de atividades
+
+**Fase 6 - Automações**:
+- [ ] Integração com SendGrid (emails)
+- [ ] Integração com Twilio (SMS)
+- [ ] Configuração de gatilhos automáticos
+- [ ] Templates de mensagens
+- [ ] Agendamento de disparos
+
+**Fase 7 - Dashboards Avançados**:
+- [ ] Novos gráficos Chart.js profissionais
+- [ ] Indicadores KPI em tempo real
+- [ ] Filtros avançados por período/consultor
+- [ ] Exportação de dashboards para PDF
+- [ ] Painéis executivos
+
 ## Data de Criação
 13 de Outubro de 2025
+
+## Última Atualização
+13 de Outubro de 2025 - Início da expansão para versão 2.0
 
 ## Desenvolvido para
 SENAI 1.03 - Serviço de Relacionamento com a Indústria

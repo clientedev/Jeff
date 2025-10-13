@@ -9,3 +9,7 @@ from models.empresa import Empresa
 from models.visita import Visita
 from models.demanda import Demanda
 from models.log import Log
+from models.inovacao import Inovacao, InovacaoEmpresa
+from models.formulario import Formulario, RespostaFormulario
+from models.diagnostico import Diagnostico, Melhoria
+from models.automacao import Automacao, LogAutomacao

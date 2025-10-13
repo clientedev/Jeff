@@ -15,6 +15,11 @@ class User(UserMixin, db.Model):
     data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
     ultimo_acesso = db.Column(db.DateTime)
     
+    telefone = db.Column(db.String(20))
+    especialidade = db.Column(db.String(100))
+    bio = db.Column(db.Text)
+    foto_url = db.Column(db.String(500))
+    
     visitas = db.relationship('Visita', backref='responsavel_user', lazy=True)
     demandas = db.relationship('Demanda', backref='responsavel_user', lazy=True)
     
@@ -32,6 +37,9 @@ class User(UserMixin, db.Model):
     
     def is_atendente(self):
         return self.perfil in ['Administrador', 'Coordenador', 'Atendente']
+    
+    def is_consultor(self):
+        return self.perfil in ['Administrador', 'Coordenador', 'Consultor']
     
     def __repr__(self):
         return f'<User {self.email}>'
