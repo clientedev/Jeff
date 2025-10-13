@@ -14,11 +14,11 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required autofocus>
+                        <input type="email" class="form-control" id="email" name="email" required autofocus autocomplete="email">
                     </div>
                     <div class="mb-3">
                         <label for="senha" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="senha" name="senha" required>
+                        <input type="password" class="form-control" id="senha" name="senha" required autocomplete="current-password">
                     </div>
                     <button type="submit" class="btn btn-senai w-100">
                         <i class="bi bi-box-arrow-in-right"></i> Entrar

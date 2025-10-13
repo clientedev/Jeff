@@ -30,6 +30,14 @@ app.register_blueprint(admin_bp)
 def index():
     return redirect(url_for('dashboard.index'))
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
+@app.route('/robots.txt')
+def robots():
+    return '', 204
+
 @app.template_filter('currency')
 def currency_filter(value):
     return f'R$ {value:,.2f}'.replace(',', 'X').replace('.', ',').replace('X', '.')
