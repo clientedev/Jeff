@@ -1,6 +1,7 @@
 from flask import render_template
 from flask_login import login_required, current_user
 from routes import dashboard_bp
+from models import db
 from models.empresa import Empresa
 from models.visita import Visita
 from models.demanda import Demanda

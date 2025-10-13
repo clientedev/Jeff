@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 from config import Config
 from models import db, login_manager
 from routes import auth_bp, dashboard_bp, empresas_bp, visitas_bp, demandas_bp, relatorios_bp, admin_bp
@@ -14,6 +15,7 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Por favor, faça login para acessar esta página.'
 login_manager.login_message_category = 'info'
 
+csrf = CSRFProtect(app)
 migrate = Migrate(app, db)
 
 app.register_blueprint(auth_bp)
