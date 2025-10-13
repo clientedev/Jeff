@@ -3,105 +3,206 @@
 {% block title %}Dashboard - SRI SENAI{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard SRI SENAI</h2>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-0"><i class="bi bi-speedometer2"></i> Dashboard SRI SENAI</h2>
+            <p class="text-muted">Visão geral de desempenho e indicadores</p>
+        </div>
+    </div>
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title">Empresas Ativas</h5>
-                <h2>{{ empresas_ativas }}</h2>
-                <small>Total: {{ total_empresas }}</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">Visitas (Mês)</h5>
-                <h2>{{ visitas_mes }}</h2>
-                <small>Total: {{ total_visitas }}</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h5 class="card-title">Demandas Abertas</h5>
-                <h2>{{ demandas_abertas }}</h2>
-                <small>Concluídas: {{ demandas_concluidas }}</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title">Taxa Conversão</h5>
-                <h2>{{ "%.1f"|format(taxa_conversao) }}%</h2>
-                <small>Oportunidades: {{ valor_total_oportunidades|currency }}</small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-calendar-check"></i> Últimas Visitas</h5>
-            </div>
-            <div class="card-body">
-                <div class="list-group">
-                    {% for visita in ultimas_visitas %}
-                    <a href="{{ url_for('visitas.detalhes', id=visita.id) }}" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">{{ visita.empresa.nome if visita.empresa else 'N/A' }}</h6>
-                            <small>{{ visita.data_visita.strftime('%d/%m/%Y') }}</small>
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-left-primary shadow h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Empresas Ativas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ empresas_ativas }}</div>
+                            <div class="text-muted small">Total: {{ total_empresas }}</div>
                         </div>
-                        <p class="mb-1"><small>{{ visita.objetivo }}</small></p>
-                        <small class="text-muted">Status: {{ visita.status }}</small>
-                    </a>
-                    {% else %}
-                    <p class="text-muted">Nenhuma visita cadastrada</p>
-                    {% endfor %}
+                        <div class="col-auto">
+                            <i class="bi bi-building text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-left-success shadow h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Visitas (Mês)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ visitas_mes }}</div>
+                            <div class="text-muted small">
+                                {% if crescimento_visitas > 0 %}
+                                <span class="text-success"><i class="bi bi-arrow-up"></i> {{ "%.1f"|format(crescimento_visitas) }}%</span>
+                                {% elif crescimento_visitas < 0 %}
+                                <span class="text-danger"><i class="bi bi-arrow-down"></i> {{ "%.1f"|format(crescimento_visitas|abs) }}%</span>
+                                {% else %}
+                                <span class="text-muted">sem alteração</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-calendar-check text-success" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-left-warning shadow h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Demandas Abertas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ demandas_abertas }}</div>
+                            <div class="text-muted small">Concluídas: {{ demandas_concluidas }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-clipboard-data text-warning" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-left-info shadow h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Taxa Conversão
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ "%.1f"|format(taxa_conversao) }}%</div>
+                            <div class="text-muted small">{{ valor_total_oportunidades|currency }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-graph-up-arrow text-info" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-clipboard-data"></i> Últimas Demandas</h5>
+
+    <div class="row mb-4">
+        <div class="col-xl-8 mb-3">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-graph-up"></i> Evolução de Visitas e Demandas (6 meses)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartEvolucao" height="80"></canvas>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="list-group">
-                    {% for demanda in ultimas_demandas %}
-                    <a href="{{ url_for('demandas.detalhes', id=demanda.id) }}" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">{{ demanda.empresa.nome if demanda.empresa else 'N/A' }}</h6>
-                            <small>{{ demanda.valor_estimado|currency }}</small>
-                        </div>
-                        <p class="mb-1"><small>{{ demanda.tipo }}</small></p>
-                        <small class="text-muted">Status: {{ demanda.status }}</small>
-                    </a>
-                    {% else %}
-                    <p class="text-muted">Nenhuma demanda cadastrada</p>
-                    {% endfor %}
+        </div>
+
+        <div class="col-xl-4 mb-3">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-pie-chart"></i> Demandas por Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartDemandasStatus" height="200"></canvas>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="bi bi-bar-chart"></i> Gráficos (Chart.js)</h5>
+    <div class="row mb-4">
+        <div class="col-xl-6 mb-3">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-bar-chart"></i> Empresas por Segmento
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartSegmentos" height="180"></canvas>
+                </div>
             </div>
-            <div class="card-body">
-                <canvas id="chartDemandas" width="400" height="100"></canvas>
+        </div>
+
+        <div class="col-xl-6 mb-3">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-pie-chart-fill"></i> Demandas por Tipo
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartTipos" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6 mb-3">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-calendar-check"></i> Últimas Visitas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for visita in ultimas_visitas %}
+                        <a href="{{ url_for('visitas.detalhes', id=visita.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ visita.empresa.nome if visita.empresa else 'N/A' }}</h6>
+                                <small>{{ visita.data_visita.strftime('%d/%m/%Y') }}</small>
+                            </div>
+                            <p class="mb-1 small">{{ visita.objetivo }}</p>
+                            <small><span class="badge bg-{{ 'success' if visita.status == 'Realizada' else 'warning' }}">{{ visita.status }}</span></small>
+                        </a>
+                        {% else %}
+                        <p class="text-muted text-center py-3">Nenhuma visita cadastrada</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 mb-3">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-clipboard-data"></i> Últimas Demandas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for demanda in ultimas_demandas %}
+                        <a href="{{ url_for('demandas.detalhes', id=demanda.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ demanda.empresa.nome if demanda.empresa else 'N/A' }}</h6>
+                                <small>{{ demanda.valor_estimado|currency }}</small>
+                            </div>
+                            <p class="mb-1 small">{{ demanda.tipo }}</p>
+                            <small><span class="badge bg-{{ 'success' if demanda.status == 'Concluída' else 'info' }}">{{ demanda.status }}</span></small>
+                        </a>
+                        {% else %}
+                        <p class="text-muted text-center py-3">Nenhuma demanda cadastrada</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -111,26 +212,156 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('chartDemandas');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [{% for status, count in demandas_por_status %}'{{ status }}',{% endfor %}],
-            datasets: [{
-                label: 'Demandas por Status',
-                data: [{% for status, count in demandas_por_status %}{{ count }},{% endfor %}],
-                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
-                borderWidth: 1
-            }]
+const chartColors = {
+    primary: 'rgba(54, 162, 235, 0.8)',
+    success: 'rgba(75, 192, 192, 0.8)',
+    warning: 'rgba(255, 206, 86, 0.8)',
+    danger: 'rgba(255, 99, 132, 0.8)',
+    info: 'rgba(153, 102, 255, 0.8)',
+    secondary: 'rgba(201, 203, 207, 0.8)'
+};
+
+const chartEvolucao = new Chart(document.getElementById('chartEvolucao'), {
+    type: 'line',
+    data: {
+        labels: {{ labels_6_meses|safe }},
+        datasets: [{
+            label: 'Visitas',
+            data: {{ visitas_ultimos_6_meses|safe }},
+            borderColor: chartColors.success,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Demandas',
+            data: {{ demandas_ultimas_6_meses|safe }},
+            borderColor: chartColors.primary,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: false
+            }
         },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
                 }
             }
         }
-    });
+    }
+});
+
+const chartDemandasStatus = new Chart(document.getElementById('chartDemandasStatus'), {
+    type: 'doughnut',
+    data: {
+        labels: [{% for status, count in demandas_por_status %}'{{ status }}',{% endfor %}],
+        datasets: [{
+            data: [{% for status, count in demandas_por_status %}{{ count }},{% endfor %}],
+            backgroundColor: [
+                chartColors.success,
+                chartColors.warning,
+                chartColors.info,
+                chartColors.danger
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+const chartSegmentos = new Chart(document.getElementById('chartSegmentos'), {
+    type: 'bar',
+    data: {
+        labels: [{% for segmento, count in empresas_por_segmento %}'{{ segmento[:20] }}',{% endfor %}],
+        datasets: [{
+            label: 'Empresas',
+            data: [{% for segmento, count in empresas_por_segmento %}{{ count }},{% endfor %}],
+            backgroundColor: chartColors.primary
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+
+const chartTipos = new Chart(document.getElementById('chartTipos'), {
+    type: 'pie',
+    data: {
+        labels: [{% for tipo, count in demandas_por_tipo %}'{{ tipo }}',{% endfor %}],
+        datasets: [{
+            data: [{% for tipo, count in demandas_por_tipo %}{{ count }},{% endfor %}],
+            backgroundColor: [
+                chartColors.primary,
+                chartColors.success,
+                chartColors.warning,
+                chartColors.danger,
+                chartColors.info,
+                chartColors.secondary
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right'
+            }
+        }
+    }
+});
 </script>
+
+<style>
+.border-left-primary {
+    border-left: 4px solid #4e73df !important;
+}
+.border-left-success {
+    border-left: 4px solid #1cc88a !important;
+}
+.border-left-warning {
+    border-left: 4px solid #f6c23e !important;
+}
+.border-left-info {
+    border-left: 4px solid #36b9cc !important;
+}
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+</style>
 {% endblock %}
