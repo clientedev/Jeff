@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SRI SENAI{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard SRI SENAI</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Empresas Ativas</h5>
+                <h2>{{ empresas_ativas }}</h2>
+                <small>Total: {{ total_empresas }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Visitas (Mês)</h5>
+                <h2>{{ visitas_mes }}</h2>
+                <small>Total: {{ total_visitas }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Demandas Abertas</h5>
+                <h2>{{ demandas_abertas }}</h2>
+                <small>Concluídas: {{ demandas_concluidas }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Taxa Conversão</h5>
+                <h2>{{ "%.1f"|format(taxa_conversao) }}%</h2>
+                <small>Oportunidades: {{ valor_total_oportunidades|currency }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-calendar-check"></i> Últimas Visitas</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for visita in ultimas_visitas %}
+                    <a href="{{ url_for('visitas.detalhes', id=visita.id) }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ visita.empresa.nome if visita.empresa else 'N/A' }}</h6>
+                            <small>{{ visita.data_visita.strftime('%d/%m/%Y') }}</small>
+                        </div>
+                        <p class="mb-1"><small>{{ visita.objetivo }}</small></p>
+                        <small class="text-muted">Status: {{ visita.status }}</small>
+                    </a>
+                    {% else %}
+                    <p class="text-muted">Nenhuma visita cadastrada</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-clipboard-data"></i> Últimas Demandas</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for demanda in ultimas_demandas %}
+                    <a href="{{ url_for('demandas.detalhes', id=demanda.id) }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ demanda.empresa.nome if demanda.empresa else 'N/A' }}</h6>
+                            <small>{{ demanda.valor_estimado|currency }}</small>
+                        </div>
+                        <p class="mb-1"><small>{{ demanda.tipo }}</small></p>
+                        <small class="text-muted">Status: {{ demanda.status }}</small>
+                    </a>
+                    {% else %}
+                    <p class="text-muted">Nenhuma demanda cadastrada</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-bar-chart"></i> Gráficos (Chart.js)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="chartDemandas" width="400" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('chartDemandas');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for status, count in demandas_por_status %}'{{ status }}',{% endfor %}],
+            datasets: [{
+                label: 'Demandas por Status',
+                data: [{% for status, count in demandas_por_status %}{{ count }},{% endfor %}],
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

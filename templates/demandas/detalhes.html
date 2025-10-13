@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-clipboard-data"></i> Detalhes da Demanda</h2>
+    <div>
+        {% if current_user.is_atendente() %}
+        <a href="{{ url_for('demandas.editar', id=demanda.id) }}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        {% endif %}
+        {% if current_user.is_coordenador() %}
+        <form method="POST" action="{{ url_for('demandas.excluir', id=demanda.id) }}" style="display: inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Confirma exclusão?')">
+                <i class="bi bi-trash"></i> Excluir
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>Empresa:</strong> 
+            {% if demanda.empresa %}
+            <a href="{{ url_for('empresas.detalhes', id=demanda.empresa.id) }}">{{ demanda.empresa.nome }}</a>
+            {% else %}
+            N/A
+            {% endif %}
+        </p>
+        <p><strong>Tipo:</strong> {{ demanda.tipo }}</p>
+        <p><strong>Status:</strong> 
+            <span class="badge bg-{{ 'success' if demanda.status == 'Concluída' else 'warning' if demanda.status == 'Em andamento' else 'info' }}">
+                {{ demanda.status }}
+            </span>
+        </p>
+        <p><strong>Valor Estimado:</strong> {{ demanda.valor_estimado|currency }}</p>
+        <p><strong>Setor Responsável:</strong> {{ demanda.setor_responsavel or 'N/A' }}</p>
+        <p><strong>Responsável:</strong> {{ demanda.responsavel_user.nome if demanda.responsavel_user else 'N/A' }}</p>
+        <p><strong>Data Criação:</strong> {{ demanda.data_criacao.strftime('%d/%m/%Y %H:%M') if demanda.data_criacao else 'N/A' }}</p>
+        {% if demanda.data_conclusao %}
+        <p><strong>Data Conclusão:</strong> {{ demanda.data_conclusao.strftime('%d/%m/%Y %H:%M') }}</p>
+        {% endif %}
+        <p><strong>Convertida em Projeto:</strong> {{ 'Sim' if demanda.convertida_projeto else 'Não' }}</p>
+        
+        <hr>
+        
+        <h5>Descrição</h5>
+        <p>{{ demanda.descricao }}</p>
+        
+        {% if demanda.historico %}
+        <h5>Histórico</h5>
+        <p>{{ demanda.historico }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

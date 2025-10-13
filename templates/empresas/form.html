@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">{{ 'Editar' if empresa else 'Nova' }} Empresa</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nome *</label>
+                    <input type="text" class="form-control" name="nome" value="{{ empresa.nome if empresa }}" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">CNPJ</label>
+                    <input type="text" class="form-control" name="cnpj" value="{{ empresa.cnpj if empresa }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">IE</label>
+                    <input type="text" class="form-control" name="ie" value="{{ empresa.ie if empresa }}">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Segmento</label>
+                    <select class="form-select" name="segmento">
+                        <option value="">Selecione...</option>
+                        <option {{ 'selected' if empresa and empresa.segmento == 'Automotivo' }}>Automotivo</option>
+                        <option {{ 'selected' if empresa and empresa.segmento == 'Alimentício' }}>Alimentício</option>
+                        <option {{ 'selected' if empresa and empresa.segmento == 'Metalúrgico' }}>Metalúrgico</option>
+                        <option {{ 'selected' if empresa and empresa.segmento == 'Têxtil' }}>Têxtil</option>
+                        <option {{ 'selected' if empresa and empresa.segmento == 'Tecnologia' }}>Tecnologia</option>
+                        <option {{ 'selected' if empresa and empresa.segmento == 'Outros' }}>Outros</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Porte</label>
+                    <select class="form-select" name="porte">
+                        <option value="">Selecione...</option>
+                        <option {{ 'selected' if empresa and empresa.porte == 'MEI' }}>MEI</option>
+                        <option {{ 'selected' if empresa and empresa.porte == 'Micro' }}>Micro</option>
+                        <option {{ 'selected' if empresa and empresa.porte == 'Pequena' }}>Pequena</option>
+                        <option {{ 'selected' if empresa and empresa.porte == 'Média' }}>Média</option>
+                        <option {{ 'selected' if empresa and empresa.porte == 'Grande' }}>Grande</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Endereço</label>
+                    <input type="text" class="form-control" name="endereco" value="{{ empresa.endereco if empresa }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Cidade</label>
+                    <input type="text" class="form-control" name="cidade" value="{{ empresa.cidade if empresa }}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">UF</label>
+                    <input type="text" class="form-control" name="uf" value="{{ empresa.uf if empresa }}" maxlength="2">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Contato Principal</label>
+                    <input type="text" class="form-control" name="contato_principal" value="{{ empresa.contato_principal if empresa }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Telefone</label>
+                    <input type="text" class="form-control" name="telefone" value="{{ empresa.telefone if empresa }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" value="{{ empresa.email if empresa }}">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" name="status">
+                        <option {{ 'selected' if empresa and empresa.status == 'Ativo' else 'selected' if not empresa }}>Ativo</option>
+                        <option {{ 'selected' if empresa and empresa.status == 'Inativo' }}>Inativo</option>
+                        <option {{ 'selected' if empresa and empresa.status == 'Prospect' }}>Prospect</option>
+                        <option {{ 'selected' if empresa and empresa.status == 'Estratégico' }}>Estratégico</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Observações</label>
+                    <textarea class="form-control" name="observacoes" rows="2">{{ empresa.observacoes if empresa }}</textarea>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-senai">
+                    <i class="bi bi-check-circle"></i> Salvar
+                </button>
+                <a href="{{ url_for('empresas.lista') }}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

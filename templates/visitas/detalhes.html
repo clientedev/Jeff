@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-calendar-check"></i> Detalhes da Visita</h2>
+    <div>
+        {% if current_user.is_atendente() %}
+        <a href="{{ url_for('visitas.editar', id=visita.id) }}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        {% endif %}
+        {% if current_user.is_coordenador() %}
+        <form method="POST" action="{{ url_for('visitas.excluir', id=visita.id) }}" style="display: inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Confirma exclusão?')">
+                <i class="bi bi-trash"></i> Excluir
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>Data:</strong> {{ visita.data_visita.strftime('%d/%m/%Y') }}</p>
+        <p><strong>Empresa:</strong> 
+            {% if visita.empresa %}
+            <a href="{{ url_for('empresas.detalhes', id=visita.empresa.id) }}">{{ visita.empresa.nome }}</a>
+            {% else %}
+            N/A
+            {% endif %}
+        </p>
+        <p><strong>Responsável:</strong> {{ visita.responsavel_user.nome if visita.responsavel_user else 'N/A' }}</p>
+        <p><strong>Objetivo:</strong> {{ visita.objetivo or 'N/A' }}</p>
+        <p><strong>Status:</strong> 
+            <span class="badge bg-{{ 'success' if visita.status == 'Realizada' else 'warning' if visita.status == 'Planejada' else 'secondary' }}">
+                {{ visita.status }}
+            </span>
+        </p>
+        <p><strong>Localização:</strong> {{ visita.localizacao or 'N/A' }}</p>
+        
+        <hr>
+        
+        <h5>Resumo</h5>
+        <p>{{ visita.resumo or 'Sem resumo' }}</p>
+        
+        <h5>Próximos Passos</h5>
+        <p>{{ visita.proximos_passos or 'Nenhum passo definido' }}</p>
+    </div>
+</div>
+{% endblock %}

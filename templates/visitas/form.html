@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">{{ 'Editar' if visita else 'Nova' }} Visita</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Data da Visita *</label>
+                    <input type="date" class="form-control" name="data_visita" value="{{ visita.data_visita if visita }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Empresa *</label>
+                    <select class="form-select" name="empresa_id" required>
+                        <option value="">Selecione...</option>
+                        {% for emp in empresas %}
+                        <option value="{{ emp.id }}" {{ 'selected' if visita and visita.empresa_id == emp.id }}>
+                            {{ emp.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Objetivo</label>
+                    <input type="text" class="form-control" name="objetivo" value="{{ visita.objetivo if visita }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" name="status">
+                        <option {{ 'selected' if visita and visita.status == 'Planejada' else 'selected' if not visita }}>Planejada</option>
+                        <option {{ 'selected' if visita and visita.status == 'Realizada' }}>Realizada</option>
+                        <option {{ 'selected' if visita and visita.status == 'Cancelada' }}>Cancelada</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Localização</label>
+                <input type="text" class="form-control" name="localizacao" value="{{ visita.localizacao if visita }}">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Resumo</label>
+                <textarea class="form-control" name="resumo" rows="3">{{ visita.resumo if visita }}</textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Próximos Passos</label>
+                <textarea class="form-control" name="proximos_passos" rows="3">{{ visita.proximos_passos if visita }}</textarea>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-senai">
+                    <i class="bi bi-check-circle"></i> Salvar
+                </button>
+                <a href="{{ url_for('visitas.lista') }}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

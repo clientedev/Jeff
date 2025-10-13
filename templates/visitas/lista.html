@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-calendar-check"></i> Visitas Técnicas</h2>
+    {% if current_user.is_atendente() %}
+    <a href="{{ url_for('visitas.nova') }}" class="btn btn-senai">
+        <i class="bi bi-plus-circle"></i> Nova Visita
+    </a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Empresa</th>
+                        <th>Responsável</th>
+                        <th>Objetivo</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visita in visitas.items %}
+                    <tr>
+                        <td>{{ visita.data_visita.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ visita.empresa.nome if visita.empresa else 'N/A' }}</td>
+                        <td>{{ visita.responsavel_user.nome if visita.responsavel_user else 'N/A' }}</td>
+                        <td>{{ visita.objetivo }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if visita.status == 'Realizada' else 'warning' if visita.status == 'Planejada' else 'secondary' }}">
+                                {{ visita.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('visitas.detalhes', id=visita.id) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            {% if current_user.is_atendente() %}
+                            <a href="{{ url_for('visitas.editar', id=visita.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Nenhuma visita encontrada</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

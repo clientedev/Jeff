@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-building"></i> {{ empresa.nome }}</h2>
+    <div>
+        {% if current_user.is_atendente() %}
+        <a href="{{ url_for('empresas.editar', id=empresa.id) }}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        {% endif %}
+        {% if current_user.is_coordenador() %}
+        <form method="POST" action="{{ url_for('empresas.excluir', id=empresa.id) }}" style="display: inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Confirma exclusão?')">
+                <i class="bi bi-trash"></i> Excluir
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><strong>Informações Gerais</strong></div>
+            <div class="card-body">
+                <p><strong>CNPJ:</strong> {{ empresa.cnpj or 'N/A' }}</p>
+                <p><strong>IE:</strong> {{ empresa.ie or 'N/A' }}</p>
+                <p><strong>Segmento:</strong> {{ empresa.segmento or 'N/A' }}</p>
+                <p><strong>Porte:</strong> {{ empresa.porte or 'N/A' }}</p>
+                <p><strong>Status:</strong> <span class="badge bg-{{ 'success' if empresa.status == 'Ativo' else 'secondary' }}">{{ empresa.status }}</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><strong>Contato</strong></div>
+            <div class="card-body">
+                <p><strong>Endereço:</strong> {{ empresa.endereco or 'N/A' }}</p>
+                <p><strong>Cidade/UF:</strong> {{ empresa.cidade or 'N/A' }}/{{ empresa.uf or 'N/A' }}</p>
+                <p><strong>Contato:</strong> {{ empresa.contato_principal or 'N/A' }}</p>
+                <p><strong>Telefone:</strong> {{ empresa.telefone or 'N/A' }}</p>
+                <p><strong>Email:</strong> {{ empresa.email or 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><strong>Visitas Relacionadas</strong></div>
+    <div class="card-body">
+        {% if empresa.visitas %}
+        <ul class="list-group">
+            {% for visita in empresa.visitas %}
+            <li class="list-group-item">
+                <a href="{{ url_for('visitas.detalhes', id=visita.id) }}">{{ visita.data_visita.strftime('%d/%m/%Y') }} - {{ visita.objetivo }}</a>
+                <span class="badge bg-info float-end">{{ visita.status }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">Nenhuma visita cadastrada</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><strong>Demandas Relacionadas</strong></div>
+    <div class="card-body">
+        {% if empresa.demandas %}
+        <ul class="list-group">
+            {% for demanda in empresa.demandas %}
+            <li class="list-group-item">
+                <a href="{{ url_for('demandas.detalhes', id=demanda.id) }}">{{ demanda.tipo }} - {{ demanda.descricao[:50] }}</a>
+                <span class="badge bg-warning float-end">{{ demanda.status }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">Nenhuma demanda cadastrada</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

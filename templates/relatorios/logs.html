@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-shield-lock"></i> Logs de Auditoria</h2>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Usuário</th>
+                        <th>Ação</th>
+                        <th>Descrição</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs.items %}
+                    <tr>
+                        <td>{{ log.data_hora.strftime('%d/%m/%Y %H:%M:%S') if log.data_hora else 'N/A' }}</td>
+                        <td>{{ log.usuario_email }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if 'LOGIN' in log.acao else 'warning' if 'CRIAR' in log.acao else 'info' if 'EDITAR' in log.acao else 'danger' if 'EXCLUIR' in log.acao else 'secondary' }}">
+                                {{ log.acao }}
+                            </span>
+                        </td>
+                        <td>{{ log.descricao }}</td>
+                        <td><small>{{ log.ip_address }}</small></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhum log registrado</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if logs.pages > 1 %}
+        <nav>
+            <ul class="pagination">
+                {% for page_num in logs.iter_pages() %}
+                    {% if page_num %}
+                        <li class="page-item {{ 'active' if page_num == logs.page }}">
+                            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
