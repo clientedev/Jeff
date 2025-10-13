@@ -5,9 +5,16 @@ from config import Config
 from models import db, login_manager
 from routes import auth_bp, dashboard_bp, empresas_bp, visitas_bp, demandas_bp, relatorios_bp, admin_bp
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+logger.info(f"Database URI configured: {app.config.get('SQLALCHEMY_DATABASE_URI', 'NOT SET')[:50]}...")
+logger.info(f"Engine options: {app.config.get('SQLALCHEMY_ENGINE_OPTIONS', {})}")
 
 db.init_app(app)
 login_manager.init_app(app)
