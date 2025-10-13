@@ -1,0 +1,361 @@
+Crie um sistema web completo em Python (Flask) com PostgreSQL para o Serviço de Relacionamento com a Indústria (SRI) do SENAI 1.03, incluindo login seguro, controle de permissões, relatórios, dashboards, exportação e importação de planilhas, além de integração com notificações e upload de arquivos.
+
+O sistema deve ser profissional, moderno, seguro e responsivo, com arquitetura modular e seguindo boas práticas de desenvolvimento.
+
+⚙️ Requisitos técnicos
+
+Backend: Python 3.11 + Flask
+
+Banco de dados: PostgreSQL
+
+ORM: SQLAlchemy + Flask-Migrate
+
+Frontend: Bootstrap 5 + HTML + Jinja2 + JavaScript (fetch/AJAX)
+
+Autenticação: Flask-Login + Werkzeug Security (hash de senha)
+
+Migrações: Flask-Migrate
+
+Relatórios e gráficos: Chart.js + Plotly
+
+Exportação: Pandas + openpyxl (XLSX) + CSV + PDF (ReportLab)
+
+Importação de planilhas: openpyxl
+
+Upload de arquivos: Flask-Uploads ou Flask-WTF
+
+Notificações: via e-mail (Flask-Mail) e no painel
+
+Controle de logs: log de ações do usuário e auditoria
+
+Arquitetura: MVC com Blueprints (modularizada)
+
+Hospedagem compatível: Railway ou Render
+
+🧩 Funcionalidades principais
+🔐 1. Sistema de login e segurança
+
+Tela de login com:
+
+E-mail e senha
+
+Recuperação de senha via e-mail
+
+Bloqueio após 5 tentativas falhas
+
+Logout com expiração de sessão
+
+Autenticação de dois fatores opcional (2FA por e-mail)
+
+Cookies seguros, CSRF e validação de sessão
+
+Criptografia de senhas com Werkzeug (generate_password_hash)
+
+👥 2. Usuários e permissões
+
+CRUD completo de usuários
+
+Perfis de acesso:
+
+Administrador: acesso total, cria usuários, define permissões, gera relatórios globais
+
+Coordenador: acesso a todos os dados de empresas, visitas e demandas
+
+Atendente: cria e edita visitas e demandas apenas de suas empresas
+
+Leitor: acesso somente leitura para visualização de relatórios
+
+Registro de atividade (log de ações): login, edição, exclusão, criação
+
+Tabela de logs com IP, usuário, data e ação
+
+🏢 3. Cadastro e gestão de empresas
+
+Campos:
+
+Nome, CNPJ, IE, segmento industrial, porte, endereço, cidade, UF, contato principal, telefone, e-mail
+
+Status do relacionamento (ativo, inativo, prospect, estratégico)
+
+Observações, data de cadastro, responsável
+
+Upload de documentos (contratos, relatórios)
+
+Importação em massa via planilha XLSX ou CSV (com verificação de duplicidade por CNPJ)
+
+Exportação filtrada de empresas para Excel/PDF
+
+Busca inteligente (nome, CNPJ, cidade, segmento)
+
+Histórico de interações com a empresa (visitas, demandas, projetos)
+
+📅 4. Gestão de visitas técnicas
+
+Cadastro de visitas:
+
+Data, empresa, responsável, objetivo, resumo, próximos passos
+
+Status: planejada / realizada / cancelada
+
+Localização (endereço + mapa integrado via Google Maps)
+
+Upload de relatório de visita (PDF ou DOCX)
+
+Acompanhamento de visitas no calendário interativo (FullCalendar.js)
+
+Filtros por empresa, técnico, período, status
+
+Exportação de visitas para Excel e PDF
+
+Relatório de visitas com KPIs (número de visitas por mês, por técnico e por setor)
+
+🧾 5. Demandas e oportunidades
+
+Cadastro de demanda:
+
+Empresa vinculada
+
+Tipo (curso, consultoria, inovação, tecnologia, manutenção, outro)
+
+Descrição detalhada
+
+Setor responsável
+
+Status (nova, em andamento, concluída, cancelada)
+
+Valor estimado
+
+Responsável interno
+
+Datas de criação e conclusão
+
+Histórico de atualizações
+
+Anexos (propostas, orçamentos, relatórios)
+
+Dashboard de conversão: quantas demandas viraram projetos
+
+Exportação de demandas para Excel/PDF
+
+📆 6. Agenda integrada
+
+Calendário central de todas as visitas e demandas
+
+Filtros por responsável, tipo e status
+
+Integração com Google Calendar (opcional)
+
+Visualização mensal/semanal/lista
+
+Notificações de prazos e compromissos
+
+📊 7. Dashboard e relatórios avançados
+
+Painel visual com gráficos dinâmicos (Chart.js ou Plotly):
+
+Número de empresas ativas/inativas
+
+Visitas realizadas por mês e por técnico
+
+Demandas abertas, em andamento e concluídas
+
+Valor total de oportunidades geradas
+
+Taxa de conversão de demandas (%)
+
+Tempo médio de atendimento
+
+Distribuição por segmento industrial
+
+Empresas mais atendidas
+
+📑 Relatórios exportáveis:
+
+PDF, XLSX e CSV
+
+Relatórios automáticos com filtros:
+
+Por empresa, data, responsável, setor ou status
+
+Por segmento industrial
+
+Relatório consolidado mensal do SRI
+
+Relatório comparativo entre períodos
+
+Geração de gráficos e planilhas automáticas
+
+📥 8. Upload e importação de planilhas
+
+Upload de planilhas Excel (XLSX) para:
+
+Cadastro em massa de empresas
+
+Carga de visitas e demandas históricas
+
+Verificação de duplicidade e validação de campos (ex: CNPJ válido)
+
+Exibição de pré-visualização antes da importação
+
+Logs das importações realizadas
+
+📤 9. Exportação de dados
+
+Exportação em formatos:
+
+Excel (XLSX)
+
+CSV
+
+PDF (relatórios formatados)
+
+Opção de exportar apenas filtros aplicados
+
+Geração automática de planilhas com gráficos embutidos (usando openpyxl.drawing.chart)
+
+🔔 10. Notificações e comunicação
+
+Notificações automáticas no painel e por e-mail quando:
+
+Uma nova demanda for criada
+
+Uma visita for marcada
+
+Uma demanda mudar de status
+
+Sistema interno de avisos no dashboard
+
+Histórico de notificações
+
+Envio manual de alertas pelo administrador
+
+📁 11. Documentos e anexos
+
+Upload e gerenciamento de documentos relacionados a empresas, visitas e demandas
+
+Tipos de arquivo aceitos: PDF, DOCX, XLSX, PNG, JPG
+
+Visualização e download direto no sistema
+
+Organização em pastas por empresa
+
+🧮 12. Indicadores e KPIs
+
+Total de empresas ativas
+
+Total de visitas realizadas
+
+Total de demandas criadas / concluídas
+
+Valor total em oportunidades
+
+Conversão média (demanda → projeto)
+
+Tempo médio de resposta
+
+Ranking de atendentes / técnicos
+
+Mapa de calor de visitas (Google Maps)
+
+🧠 13. Logs e auditoria
+
+Registro completo de ações:
+
+login/logout
+
+criação/edição/exclusão de registros
+
+importações/exportações realizadas
+
+Tabela de logs com data, usuário, IP e descrição da ação
+
+Relatório de auditoria exportável
+
+💬 14. Interface e usabilidade
+
+Layout responsivo (Bootstrap 5)
+
+Tema com cores institucionais do SENAI
+
+Navbar com acesso rápido às seções: Dashboard / Empresas / Visitas / Demandas / Relatórios / Configurações
+
+Pesquisa global no topo
+
+Paginação e filtros em todas as tabelas
+
+Confirmação visual antes de excluir registros
+
+Mensagens de sucesso e erro com SweetAlert2
+
+⚙️ 15. Configurações administrativas
+
+CRUD de usuários e permissões
+
+Cadastro de tipos de demanda, segmentos industriais e status
+
+Configuração de parâmetros gerais (limite de tentativas de login, envio de e-mail, etc.)
+
+Backup automático do banco (dump diário .sql)
+
+🧱 16. Estrutura de pastas sugerida
+/sri_app
+│
+├── app.py
+├── config.py
+├── requirements.txt
+│
+├── /models
+│   ├── user.py
+│   ├── empresa.py
+│   ├── visita.py
+│   ├── demanda.py
+│   ├── log.py
+│
+├── /routes
+│   ├── auth.py
+│   ├── empresas.py
+│   ├── visitas.py
+│   ├── demandas.py
+│   ├── relatorios.py
+│   ├── dashboard.py
+│   ├── uploads.py
+│
+├── /templates
+│   ├── base.html
+│   ├── login.html
+│   ├── dashboard.html
+│   ├── empresas/
+│   ├── visitas/
+│   ├── demandas/
+│   ├── relatorios/
+│
+├── /static
+│   ├── css/
+│   ├── js/
+│   └── uploads/
+
+🧰 17. Requisitos adicionais
+
+Rotas RESTful para APIs (para futura integração com aplicativo móvel)
+
+Proteção de todas as rotas privadas
+
+Paginação de resultados
+
+Sistema multilíngue preparado (pt-br, en)
+
+Logging com Python logging module
+
+Configuração de ambiente (.env com Flask-dotenv)
+
+🧾 18. Extras opcionais
+
+Dashboard com dark mode
+
+Integração com API da ReceitaWS (consulta de CNPJ)
+
+Chat interno entre usuários (Flask-SocketIO)
+
+Mapa de calor de empresas visitadas (Plotly ou Folium)
+
+Envio automático de relatórios mensais por e-mail em PDF
