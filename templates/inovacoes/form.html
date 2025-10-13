@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if inovacao else 'Nova' }} Inovação - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="page-title">
+            <i class="bi bi-lightbulb"></i> {{ 'Editar' if inovacao else 'Nova' }} Inovação Lean
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inovacoes.index') }}">Inovações</a></li>
+                <li class="breadcrumb-item active">{{ 'Editar' if inovacao else 'Nova' }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Nome da Inovação *</label>
+                            <input type="text" class="form-control" name="nome" 
+                                   value="{{ inovacao.nome if inovacao else '' }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Nível de Complexidade *</label>
+                            <select class="form-select" name="nivel_complexidade" required>
+                                <option value="Baixa" {{ 'selected' if inovacao and inovacao.nivel_complexidade == 'Baixa' else '' }}>Baixa</option>
+                                <option value="Média" {{ 'selected' if inovacao and inovacao.nivel_complexidade == 'Média' else '' }}>Média</option>
+                                <option value="Alta" {{ 'selected' if inovacao and inovacao.nivel_complexidade == 'Alta' else '' }}>Alta</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Categoria Lean Manufacturing *</label>
+                            <select class="form-select" name="categoria" required>
+                                {% for cat in categorias %}
+                                <option value="{{ cat }}" {{ 'selected' if inovacao and inovacao.categoria == cat else '' }}>
+                                    {{ cat }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Tempo de Implementação</label>
+                            <input type="text" class="form-control" name="tempo_implementacao" 
+                                   value="{{ inovacao.tempo_implementacao if inovacao else '' }}"
+                                   placeholder="Ex: 2-3 meses">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="3">{{ inovacao.descricao if inovacao else '' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Benefícios Esperados</label>
+                        <textarea class="form-control" name="beneficios" rows="3">{{ inovacao.beneficios if inovacao else '' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Requisitos para Implementação</label>
+                        <textarea class="form-control" name="requisitos" rows="3">{{ inovacao.requisitos if inovacao else '' }}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-senai">
+                            <i class="bi bi-check-circle"></i> {{ 'Atualizar' if inovacao else 'Cadastrar' }}
+                        </button>
+                        <a href="{{ url_for('inovacoes.index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

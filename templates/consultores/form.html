@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if consultor else 'Novo' }} Consultor - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="page-title"><i class="bi bi-person"></i> {{ 'Editar' if consultor else 'Novo' }} Consultor</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome *</label>
+                            <input type="text" class="form-control" name="nome" value="{{ consultor.nome if consultor else '' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-control" name="email" value="{{ consultor.email if consultor else '' }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" class="form-control" name="telefone" value="{{ consultor.telefone if consultor else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Perfil</label>
+                            <select class="form-select" name="perfil">
+                                <option value="Consultor" {{ 'selected' if consultor and consultor.perfil == 'Consultor' else '' }}>Consultor</option>
+                                <option value="Coordenador" {{ 'selected' if consultor and consultor.perfil == 'Coordenador' else '' }}>Coordenador</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Especialidade</label>
+                        <input type="text" class="form-control" name="especialidade" value="{{ consultor.especialidade if consultor else '' }}" placeholder="Ex: Lean Manufacturing, Gestão da Qualidade">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bio/Resumo</label>
+                        <textarea class="form-control" name="bio" rows="3">{{ consultor.bio if consultor else '' }}</textarea>
+                    </div>
+                    {% if not consultor %}
+                    <div class="mb-3">
+                        <label class="form-label">Senha Inicial *</label>
+                        <input type="password" class="form-control" name="senha" required minlength="8">
+                        <small class="text-muted">Mínimo 8 caracteres. O consultor poderá alterar após o primeiro acesso.</small>
+                    </div>
+                    {% else %}
+                    <div class="mb-3">
+                        <label class="form-label">Nova Senha (deixe em branco para não alterar)</label>
+                        <input type="password" class="form-control" name="senha">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="ativo" id="ativo" {{ 'checked' if consultor.ativo else '' }}>
+                        <label class="form-check-label" for="ativo">Ativo</label>
+                    </div>
+                    {% endif %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-senai"><i class="bi bi-check-circle"></i> Salvar</button>
+                        <a href="{{ url_for('consultores.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Novo Diagnóstico - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="page-title"><i class="bi bi-clipboard2-pulse"></i> Novo Diagnóstico</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Empresa *</label>
+                            <select class="form-select" name="empresa_id" required>
+                                <option value="">Selecione...</option>
+                                {% for emp in empresas %}
+                                <option value="{{ emp.id }}">{{ emp.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Área *</label>
+                            <select class="form-select" name="area" required>
+                                {% for area in areas %}
+                                <option value="{{ area }}">{{ area }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Data *</label>
+                            <input type="date" class="form-control" name="data_diagnostico" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Situação Atual</label>
+                        <textarea class="form-control" name="situacao_atual" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pontos Fortes</label>
+                        <textarea class="form-control" name="pontos_fortes" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Oportunidades de Melhoria</label>
+                        <textarea class="form-control" name="oportunidades_melhoria" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Riscos Identificados</label>
+                        <textarea class="form-control" name="riscos_identificados" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Recomendações</label>
+                        <textarea class="form-control" name="recomendacoes" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nota Geral (0-10)</label>
+                        <input type="number" class="form-control" name="nota_geral" min="0" max="10" value="5">
+                    </div>
+                    <hr>
+                    <h5 class="mb-3">Melhorias Propostas</h5>
+                    <div id="melhorias">
+                        <div class="row mb-2">
+                            <div class="col-md-6"><input type="text" class="form-control" name="melhoria_descricao[]" placeholder="Descrição da melhoria"></div>
+                            <div class="col-md-3"><select class="form-select" name="melhoria_prioridade[]"><option value="Alta">Alta</option><option value="Média" selected>Média</option><option value="Baixa">Baixa</option></select></div>
+                            <div class="col-md-3"><input type="text" class="form-control" name="melhoria_prazo[]" placeholder="Prazo estimado"></div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mb-3" onclick="addMelhoria()"><i class="bi bi-plus"></i> Adicionar Melhoria</button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-senai"><i class="bi bi-check-circle"></i> Salvar Diagnóstico</button>
+                        <a href="{{ url_for('diagnosticos.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function addMelhoria() {
+    const div = document.createElement('div');
+    div.className = 'row mb-2';
+    div.innerHTML = '<div class="col-md-6"><input type="text" class="form-control" name="melhoria_descricao[]" placeholder="Descrição da melhoria"></div><div class="col-md-3"><select class="form-select" name="melhoria_prioridade[]"><option value="Alta">Alta</option><option value="Média" selected>Média</option><option value="Baixa">Baixa</option></select></div><div class="col-md-3"><input type="text" class="form-control" name="melhoria_prazo[]" placeholder="Prazo estimado"></div>';
+    document.getElementById('melhorias').appendChild(div);
+}
+</script>
+{% endblock %}

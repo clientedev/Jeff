@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Diagnóstico - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="page-title"><i class="bi bi-clipboard2-pulse"></i> Diagnóstico - {{ diagnostico.empresa.nome }}</h1>
+        <p class="page-subtitle">{{ diagnostico.area }} | {{ diagnostico.data_diagnostico.strftime('%d/%m/%Y') }}</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header"><h6 class="mb-0">Informações do Diagnóstico</h6></div>
+            <div class="card-body">
+                <p><strong>Consultor:</strong> {{ diagnostico.consultor.nome }}</p>
+                <p><strong>Nota Geral:</strong> <span class="badge bg-{{ 'success' if diagnostico.nota_geral >= 7 else 'warning' if diagnostico.nota_geral >= 5 else 'danger' }}">{{ diagnostico.nota_geral }}/10</span></p>
+                <hr>
+                <h6>Situação Atual</h6>
+                <p>{{ diagnostico.situacao_atual }}</p>
+                <h6>Pontos Fortes</h6>
+                <p>{{ diagnostico.pontos_fortes }}</p>
+                <h6>Oportunidades de Melhoria</h6>
+                <p>{{ diagnostico.oportunidades_melhoria }}</p>
+                <h6>Riscos Identificados</h6>
+                <p>{{ diagnostico.riscos_identificados }}</p>
+                <h6>Recomendações</h6>
+                <p>{{ diagnostico.recomendacoes }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0">Melhorias Propostas</h6></div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for mel in melhorias %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="badge bg-{{ 'danger' if mel.prioridade == 'Alta' else 'warning' if mel.prioridade == 'Média' else 'secondary' }}">{{ mel.prioridade }}</span>
+                            <span class="badge bg-{{ 'success' if mel.status == 'Implementada' else 'info' }}">{{ mel.status }}</span>
+                        </div>
+                        <p class="mb-1">{{ mel.descricao }}</p>
+                        <small class="text-muted"><i class="bi bi-clock"></i> {{ mel.prazo_estimado }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

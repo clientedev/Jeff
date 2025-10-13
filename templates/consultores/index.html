@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Consultores - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="page-title"><i class="bi bi-people"></i> Gerenciamento de Consultores</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('consultores.novo') }}" class="btn btn-senai"><i class="bi bi-plus-circle"></i> Novo Consultor</a>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="stat-card">
+            <h4>{{ total_consultores }}</h4>
+            <p class="text-muted mb-0">Total de Consultores</p>
+            <small class="text-success">{{ consultores_ativos }} ativos</small>
+        </div>
+    </div>
+</div>
+<div class="row">
+    {% for stat in stats %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="user-avatar me-3">{{ stat.consultor.nome[0] }}</div>
+                    <div>
+                        <h6 class="mb-0">{{ stat.consultor.nome }}</h6>
+                        <small class="text-muted">{{ stat.consultor.email }}</small>
+                    </div>
+                </div>
+                {% if stat.consultor.especialidade %}
+                <p class="small text-muted mb-2"><i class="bi bi-star"></i> {{ stat.consultor.especialidade }}</p>
+                {% endif %}
+                <div class="row text-center mt-3">
+                    <div class="col-4">
+                        <div class="fw-bold text-primary">{{ stat.visitas }}</div>
+                        <small class="text-muted">Visitas</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold text-success">{{ stat.inovacoes }}</div>
+                        <small class="text-muted">Inovações</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold text-info">{{ stat.diagnosticos }}</div>
+                        <small class="text-muted">Diagnósticos</small>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('consultores.detalhes', id=stat.consultor.id) }}" class="btn btn-sm btn-outline-primary w-100">Ver Detalhes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

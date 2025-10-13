@@ -3,96 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SRI SENAI 1.03{% endblock %}</title>
+    <title>{% block title %}SRI SENAI 2.0{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --senai-blue: #003DA5;
             --senai-red: #ED1C24;
             --senai-dark: #002B5C;
+            --senai-light: #E3F2FD;
+            --sidebar-width: 260px;
+            --topbar-height: 60px;
         }
-        .navbar-senai {
-            background-color: var(--senai-blue);
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F7FA;
+            overflow-x: hidden;
+        }
+        
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, var(--senai-dark) 0%, var(--senai-blue) 100%);
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        #sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        #sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        #sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        
+        .sidebar-brand {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-brand h3 {
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .sidebar-brand small {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .nav-section-title {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 10px 20px 5px;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-nav a i {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: var(--senai-red);
+        }
+        
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+        
+        #topbar {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: 0;
+            right: 0;
+            height: var(--topbar-height);
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+        
+        #main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--topbar-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--topbar-height));
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--senai-blue), var(--senai-red));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 20px;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
         .btn-senai {
             background-color: var(--senai-blue);
             border-color: var(--senai-blue);
             color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
+        
         .btn-senai:hover {
             background-color: var(--senai-dark);
             border-color: var(--senai-dark);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 61, 165, 0.3);
         }
-        .text-senai {
-            color: var(--senai-blue);
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            color: #6B7280;
+            font-size: 0.95rem;
+        }
+        
+        @media (max-width: 768px) {
+            #sidebar {
+                left: calc(var(--sidebar-width) * -1);
+            }
+            
+            #sidebar.show {
+                left: 0;
+            }
+            
+            #topbar {
+                left: 0;
+            }
+            
+            #main-content {
+                margin-left: 0;
+            }
+        }
+        
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .table {
+            background: white;
+        }
+        
+        .table thead th {
+            background-color: #F9FAFB;
+            border-bottom: 2px solid #E5E7EB;
+            color: #374151;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     {% if current_user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-senai">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">
-                <strong>SRI SENAI 1.03</strong>
+    <div id="sidebar">
+        <div class="sidebar-brand">
+            <h3>SRI SENAI</h3>
+            <small>Sistema de Relacionamento Industrial 2.0</small>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Principal</div>
+            <a href="{{ url_for('dashboard.index') }}" class="{{ 'active' if request.endpoint == 'dashboard.index' else '' }}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            
+            <div class="nav-section-title">Gestão</div>
+            <a href="{{ url_for('empresas.lista') }}" class="{{ 'active' if 'empresas' in request.endpoint else '' }}">
+                <i class="bi bi-building"></i>
+                <span>Empresas</span>
+            </a>
+            <a href="{{ url_for('carteira.index') }}" class="{{ 'active' if 'carteira' in request.endpoint else '' }}">
+                <i class="bi bi-briefcase"></i>
+                <span>Carteira de Clientes</span>
+            </a>
+            <a href="{{ url_for('visitas.lista') }}" class="{{ 'active' if 'visitas' in request.endpoint else '' }}">
+                <i class="bi bi-calendar-check"></i>
+                <span>Visitas</span>
+            </a>
+            <a href="{{ url_for('demandas.lista') }}" class="{{ 'active' if 'demandas' in request.endpoint else '' }}">
+                <i class="bi bi-clipboard-data"></i>
+                <span>Demandas</span>
+            </a>
+            
+            <div class="nav-section-title">Inovação & Melhoria</div>
+            <a href="{{ url_for('inovacoes.index') }}" class="{{ 'active' if 'inovacoes' in request.endpoint else '' }}">
+                <i class="bi bi-lightbulb"></i>
+                <span>Inovações Lean</span>
+            </a>
+            <a href="{{ url_for('diagnosticos.index') }}" class="{{ 'active' if 'diagnosticos' in request.endpoint else '' }}">
+                <i class="bi bi-clipboard2-pulse"></i>
+                <span>Diagnósticos</span>
+            </a>
+            
+            <div class="nav-section-title">Ferramentas</div>
+            <a href="{{ url_for('formularios.lista') }}" class="{{ 'active' if 'formularios' in request.endpoint else '' }}">
+                <i class="bi bi-file-text"></i>
+                <span>Formulários</span>
+            </a>
+            <a href="{{ url_for('automacoes.index') }}" class="{{ 'active' if 'automacoes' in request.endpoint else '' }}">
+                <i class="bi bi-robot"></i>
+                <span>Automações</span>
+            </a>
+            
+            <div class="nav-section-title">Análise</div>
+            <a href="{{ url_for('relatorios.index') }}" class="{{ 'active' if 'relatorios' in request.endpoint else '' }}">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span>Relatórios & BI</span>
+            </a>
+            
+            {% if current_user.is_atendente() %}
+            <div class="nav-section-title">Importação</div>
+            <a href="{{ url_for('importacao.index') }}" class="{{ 'active' if 'importacao' in request.endpoint else '' }}">
+                <i class="bi bi-file-earmark-arrow-up"></i>
+                <span>Importar Dados</span>
+            </a>
+            {% endif %}
+            
+            {% if current_user.is_admin() %}
+            <div class="nav-section-title">Administração</div>
+            <a href="{{ url_for('consultores.index') }}" class="{{ 'active' if 'consultores' in request.endpoint else '' }}">
+                <i class="bi bi-people"></i>
+                <span>Consultores</span>
+            </a>
+            <a href="{{ url_for('admin.usuarios') }}" class="{{ 'active' if 'admin' in request.endpoint else '' }}">
+                <i class="bi bi-gear"></i>
+                <span>Usuários</span>
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+    
+    <div id="topbar">
+        <div>
+            <button class="btn btn-link d-md-none" id="toggleSidebar">
+                <i class="bi bi-list fs-3"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard.index') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('empresas.lista') }}"><i class="bi bi-building"></i> Empresas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('visitas.lista') }}"><i class="bi bi-calendar-check"></i> Visitas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('demandas.lista') }}"><i class="bi bi-clipboard-data"></i> Demandas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('carteira.index') }}"><i class="bi bi-briefcase"></i> Carteira</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('formularios.lista') }}"><i class="bi bi-file-text"></i> Formulários</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('relatorios.index') }}"><i class="bi bi-file-earmark-bar-graph"></i> Relatórios</a>
-                    </li>
-                    {% if current_user.is_atendente() %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('importacao.index') }}"><i class="bi bi-file-earmark-arrow-up"></i> Importar</a>
-                    </li>
-                    {% endif %}
-                    {% if current_user.is_admin() %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.usuarios') }}"><i class="bi bi-people"></i> Usuários</a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ current_user.nome }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">Perfil: {{ current_user.perfil }}</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sair</a></li>
-                        </ul>
-                    </li>
+        </div>
+        <div class="user-menu">
+            <div class="dropdown">
+                <button class="btn btn-link text-decoration-none d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <div class="user-avatar">{{ current_user.nome[0].upper() }}</div>
+                    <div class="text-start d-none d-md-block">
+                        <div class="fw-semibold text-dark">{{ current_user.nome }}</div>
+                        <small class="text-muted">{{ current_user.perfil }}</small>
+                    </div>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Meu Perfil</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Configurações</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Sair</a></li>
                 </ul>
             </div>
         </div>
-    </nav>
+    </div>
     {% endif %}
-
-    <div class="container-fluid mt-4">
+    
+    <div id="main-content" class="{{ 'container-fluid' if not current_user.is_authenticated else '' }}">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -103,11 +387,24 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-
+        
         {% block content %}{% endblock %}
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('toggleSidebar')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+        
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('toggleSidebar');
+            if (sidebar && sidebar.classList.contains('show') && !sidebar.contains(event.target) && !toggle?.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Logs de Automação - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="page-title"><i class="bi bi-file-text"></i> Logs de Automação</h1>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Automação</th>
+                        <th>Tipo</th>
+                        <th>Destinatário</th>
+                        <th>Status</th>
+                        <th>Mensagem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.data_envio.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                        <td>{{ log.automacao.nome }}</td>
+                        <td><span class="badge bg-primary">{{ log.automacao.tipo }}</span></td>
+                        <td>{{ log.destinatario }}</td>
+                        <td><span class="badge bg-{{ 'success' if log.status == 'Sucesso' else 'danger' if log.status == 'Erro' else 'info' }}">{{ log.status }}</span></td>
+                        <td>{{ log.mensagem }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

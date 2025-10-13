@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Diagnósticos - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="page-title"><i class="bi bi-clipboard2-pulse"></i> Diagnósticos Empresariais</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if current_user.is_consultor() %}
+        <a href="{{ url_for('diagnosticos.novo') }}" class="btn btn-senai"><i class="bi bi-plus-circle"></i> Novo Diagnóstico</a>
+        {% endif %}
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ total_diagnosticos }}</h4>
+            <p class="text-muted mb-0">Diagnósticos Realizados</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ total_melhorias }}</h4>
+            <p class="text-muted mb-0">Melhorias Propostas</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ melhorias_implementadas }}</h4>
+            <p class="text-muted mb-0">Implementadas</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ empresas_diagnosticadas }}</h4>
+            <p class="text-muted mb-0">Empresas Diagnosticadas</p>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Empresa</th>
+                        <th>Área</th>
+                        <th>Consultor</th>
+                        <th>Nota</th>
+                        <th>Melhorias</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for diag in diagnosticos %}
+                    <tr>
+                        <td>{{ diag.data_diagnostico.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ diag.empresa.nome }}</td>
+                        <td><span class="badge bg-info">{{ diag.area }}</span></td>
+                        <td>{{ diag.consultor.nome }}</td>
+                        <td><span class="badge bg-{{ 'success' if diag.nota_geral >= 7 else 'warning' if diag.nota_geral >= 5 else 'danger' }}">{{ diag.nota_geral }}/10</span></td>
+                        <td>{{ diag.melhorias|length }}</td>
+                        <td><a href="{{ url_for('diagnosticos.detalhes', id=diag.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

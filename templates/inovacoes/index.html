@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Inovações Lean Manufacturing - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="page-title"><i class="bi bi-lightbulb"></i> Inovações Lean Manufacturing</h1>
+        <p class="page-subtitle">Gestão de ferramentas de melhoria contínua e produção enxuta</p>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if current_user.is_atendente() %}
+        <a href="{{ url_for('inovacoes.nova') }}" class="btn btn-senai">
+            <i class="bi bi-plus-circle"></i> Nova Inovação
+        </a>
+        <a href="{{ url_for('inovacoes.atribuir') }}" class="btn btn-outline-primary">
+            <i class="bi bi-person-plus"></i> Atribuir
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small mb-1">Total de Inovações</div>
+                    <h3 class="mb-0">{{ total_inovacoes }}</h3>
+                    <small class="text-success">{{ inovacoes_ativas }} ativas</small>
+                </div>
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                    <i class="bi bi-lightbulb-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small mb-1">Atribuições</div>
+                    <h3 class="mb-0">{{ total_atribuicoes }}</h3>
+                    <small class="text-info">{{ empresas_com_inovacoes }} empresas</small>
+                </div>
+                <div class="stat-icon bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small mb-1">Taxa de Conclusão</div>
+                    <h3 class="mb-0">{{ "%.1f"|format(taxa_conclusao) }}%</h3>
+                    <small class="text-muted">{{ inovacoes_concluidas }}/{{ total_atribuicoes }}</small>
+                </div>
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small mb-1">ROI</div>
+                    <h3 class="mb-0">{{ "%.0f"|format(roi) }}%</h3>
+                    <small class="text-success">{{ economia_total|currency }}</small>
+                </div>
+                <div class="stat-icon bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Inovações por Categoria</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="chartCategorias" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-building"></i> Top 10 Empresas</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th class="text-center">Inovações</th>
+                                <th class="text-end">Economia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for empresa in top_empresas %}
+                            <tr>
+                                <td>{{ empresa.nome }}</td>
+                                <td class="text-center"><span class="badge bg-primary">{{ empresa.total }}</span></td>
+                                <td class="text-end">{{ (empresa.economia or 0)|currency }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-list-ul"></i> Ferramentas Lean Disponíveis</h5>
+        <a href="{{ url_for('inovacoes.atribuicoes') }}" class="btn btn-sm btn-outline-primary">
+            Ver Atribuições
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for inovacao in inovacoes %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100 border">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-0">{{ inovacao.nome }}</h6>
+                            <span class="badge bg-{{ 'success' if inovacao.ativo else 'secondary' }} ms-2">
+                                {{ 'Ativo' if inovacao.ativo else 'Inativo' }}
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-tag"></i> {{ inovacao.categoria }}
+                        </p>
+                        <p class="card-text small">{{ (inovacao.descricao[:100] + '...') if inovacao.descricao and inovacao.descricao|length > 100 else inovacao.descricao }}</p>
+                        <div class="d-flex gap-2 small text-muted mt-2">
+                            {% if inovacao.nivel_complexidade %}
+                            <span><i class="bi bi-speedometer"></i> {{ inovacao.nivel_complexidade }}</span>
+                            {% endif %}
+                            {% if inovacao.tempo_implementacao %}
+                            <span><i class="bi bi-clock"></i> {{ inovacao.tempo_implementacao }}</span>
+                            {% endif %}
+                        </div>
+                        {% if current_user.is_atendente() %}
+                        <div class="mt-3">
+                            <a href="{{ url_for('inovacoes.editar', id=inovacao.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('chartCategorias'), {
+    type: 'bar',
+    data: {
+        labels: [{% for cat, count in por_categoria %}'{{ cat[:30] }}',{% endfor %}],
+        datasets: [{
+            label: 'Atribuições',
+            data: [{% for cat, count in por_categoria %}{{ count }},{% endfor %}],
+            backgroundColor: 'rgba(0, 61, 165, 0.7)'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: { beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
+});
+</script>
+{% endblock %}

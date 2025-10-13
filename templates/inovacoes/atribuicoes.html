@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Atribuições de Inovações - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="page-title"><i class="bi bi-list-check"></i> Atribuições de Inovações</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if current_user.is_atendente() %}
+        <a href="{{ url_for('inovacoes.atribuir') }}" class="btn btn-senai"><i class="bi bi-plus-circle"></i> Nova Atribuição</a>
+        {% endif %}
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Inovação</th>
+                        <th>Empresa</th>
+                        <th>Consultor</th>
+                        <th>Status</th>
+                        <th>Progresso</th>
+                        <th>Economia</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for atr in atribuicoes %}
+                    <tr>
+                        <td>{{ atr.inovacao.nome }}</td>
+                        <td>{{ atr.empresa.nome }}</td>
+                        <td>{{ atr.consultor.nome }}</td>
+                        <td><span class="badge bg-{{ 'success' if atr.status == 'Concluída' else 'warning' }}">{{ atr.status }}</span></td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar" style="width: {{ atr.progresso }}%">{{ atr.progresso }}%</div>
+                            </div>
+                        </td>
+                        <td>{{ (atr.economia_gerada or 0)|currency }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal{{ atr.id }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

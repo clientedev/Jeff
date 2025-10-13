@@ -6,6 +6,8 @@ from models.empresa import Empresa
 from models.visita import Visita
 from models.demanda import Demanda
 from models.inovacao import InovacaoEmpresa
+from models.diagnostico import Diagnostico
+from models.user import User
 from sqlalchemy import func, extract
 from datetime import datetime, timedelta
 import json
@@ -41,6 +43,12 @@ def index():
     
     total_inovacoes = InovacaoEmpresa.query.count()
     inovacoes_concluidas = InovacaoEmpresa.query.filter_by(status='Concluída').count()
+    inovacoes_em_andamento = InovacaoEmpresa.query.filter_by(status='Em andamento').count()
+    
+    total_diagnosticos = db.session.query(func.count(Diagnostico.id)).scalar() or 0
+    total_consultores = User.query.filter(User.perfil.in_(['Consultor', 'Coordenador'])).count()
+    
+    economia_total_inovacoes = db.session.query(func.sum(InovacaoEmpresa.economia_gerada)).scalar() or 0
     
     visitas_por_status = db.session.query(
         Visita.status, func.count(Visita.id)
@@ -112,4 +120,8 @@ def index():
                          demandas_ultimas_6_meses=json.dumps(demandas_ultimas_6_meses),
                          labels_6_meses=json.dumps(labels_6_meses),
                          ultimas_visitas=ultimas_visitas,
-                         ultimas_demandas=ultimas_demandas)
+                         ultimas_demandas=ultimas_demandas,
+                         inovacoes_em_andamento=inovacoes_em_andamento,
+                         total_diagnosticos=total_diagnosticos,
+                         total_consultores=total_consultores,
+                         economia_total_inovacoes=economia_total_inovacoes)

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Automações - SRI SENAI{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="page-title"><i class="bi bi-robot"></i> Automações de Email e SMS</h1>
+        <p class="page-subtitle">Configure envios automáticos de mensagens</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('automacoes.nova') }}" class="btn btn-senai"><i class="bi bi-plus-circle"></i> Nova Automação</a>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ automacoes_ativas }}</h4>
+            <p class="text-muted mb-0">Automações Ativas</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ total_envios }}</h4>
+            <p class="text-muted mb-0">Total de Envios</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ "%.1f"|format(taxa_sucesso) }}%</h4>
+            <p class="text-muted mb-0">Taxa de Sucesso</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h4>{{ envios_erro }}</h4>
+            <p class="text-muted mb-0">Erros</p>
+        </div>
+    </div>
+</div>
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> <strong>Importante:</strong> Para ativar o envio real de emails e SMS, configure as credenciais do Twilio (SMS) e SendGrid (Email) nas configurações.
+</div>
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0">Automações Configuradas</h5></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Gatilho</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for auto in automacoes %}
+                    <tr>
+                        <td>{{ auto.nome }}</td>
+                        <td><span class="badge bg-primary">{{ auto.tipo }}</span></td>
+                        <td>{{ auto.gatilho }}</td>
+                        <td><span class="badge bg-{{ 'success' if auto.ativa else 'secondary' }}">{{ 'Ativa' if auto.ativa else 'Inativa' }}</span></td>
+                        <td>
+                            <a href="{{ url_for('automacoes.editar', id=auto.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header"><h5 class="mb-0">Últimos Logs de Envio</h5></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Automação</th>
+                        <th>Destinatário</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in ultimos_logs %}
+                    <tr>
+                        <td>{{ log.data_envio.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ log.automacao.nome }}</td>
+                        <td>{{ log.destinatario }}</td>
+                        <td><span class="badge bg-{{ 'success' if log.status == 'Sucesso' else 'danger' if log.status == 'Erro' else 'info' }}">{{ log.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{{ url_for('automacoes.logs') }}" class="btn btn-sm btn-outline-primary">Ver Todos os Logs</a>
+    </div>
+</div>
+{% endblock %}
