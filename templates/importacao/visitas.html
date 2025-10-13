@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Visitas - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('importacao.index') }}">Importação</a></li>
+            <li class="breadcrumb-item active">Visitas</li>
+        </ol>
+    </nav>
+
+    <h2><i class="bi bi-calendar-check"></i> Importar Visitas</h2>
+    <p class="text-muted">Faça upload de uma planilha Excel com os dados das visitas</p>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Arquivo Excel (.xlsx ou .xls)</label>
+                            <input type="file" name="arquivo" class="form-control" accept=".xlsx,.xls" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-info text-white">
+                                <i class="bi bi-upload"></i> Importar Visitas
+                            </button>
+                            <a href="{{ url_for('importacao.index') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="bi bi-download"></i> Template</h5>
+                    <p>Baixe o template para preencher os dados corretamente.</p>
+                    <a href="{{ url_for('importacao.download_template', tipo='visitas') }}" class="btn btn-outline-info w-100">
+                        <i class="bi bi-file-earmark-excel"></i> Download Template
+                    </a>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5><i class="bi bi-list-check"></i> Colunas Obrigatórias</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle text-success"></i> data_visita</li>
+                        <li><i class="bi bi-check-circle text-success"></i> empresa_cnpj</li>
+                        <li><i class="bi bi-check-circle text-success"></i> responsavel_email</li>
+                    </ul>
+                    <h5 class="mt-3"><i class="bi bi-list"></i> Colunas Opcionais</h5>
+                    <ul class="list-unstyled small">
+                        <li>• objetivo</li>
+                        <li>• resumo</li>
+                        <li>• proximos_passos</li>
+                        <li>• status</li>
+                        <li>• localizacao</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

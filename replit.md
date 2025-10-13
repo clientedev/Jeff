@@ -105,6 +105,13 @@ O sistema já está configurado e rodando automaticamente via workflow:
 - `DATABASE_URL`: URL do PostgreSQL (configurado automaticamente)
 - `SESSION_SECRET`: Chave secreta para sessões (configurado automaticamente)
 
+### Integrações Opcionais (Para Automações):
+> **Nota**: Para habilitar envio de emails e SMS automáticos, você precisará configurar:
+- **Para Email**: Credenciais de SendGrid, Resend, ou Gmail (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD)
+- **Para SMS**: Credenciais do Twilio (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER)
+> 
+> O sistema funciona sem essas credenciais, mas as automações ficarão desabilitadas até a configuração.
+
 ## Segurança Implementada
 - ✅ Hash de senhas com Werkzeug
 - ✅ Proteção CSRF em todos os formulários

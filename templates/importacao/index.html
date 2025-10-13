@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Dados - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2><i class="bi bi-file-earmark-arrow-up"></i> Importar Dados via Excel</h2>
+    <p class="text-muted">Importe dados em massa para o sistema através de planilhas Excel</p>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-building fs-1 text-primary"></i>
+                    <h5 class="card-title mt-3">Importar Empresas</h5>
+                    <p class="card-text">Cadastre múltiplas empresas de uma só vez</p>
+                    <a href="{{ url_for('importacao.download_template', tipo='empresas') }}" class="btn btn-outline-primary btn-sm mb-2">
+                        <i class="bi bi-download"></i> Baixar Template
+                    </a>
+                    <br>
+                    <a href="{{ url_for('importacao.importar_empresas') }}" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> Importar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-check fs-1 text-info"></i>
+                    <h5 class="card-title mt-3">Importar Visitas</h5>
+                    <p class="card-text">Registre várias visitas técnicas ao mesmo tempo</p>
+                    <a href="{{ url_for('importacao.download_template', tipo='visitas') }}" class="btn btn-outline-info btn-sm mb-2">
+                        <i class="bi bi-download"></i> Baixar Template
+                    </a>
+                    <br>
+                    <a href="{{ url_for('importacao.importar_visitas') }}" class="btn btn-info">
+                        <i class="bi bi-upload"></i> Importar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard-data fs-1 text-success"></i>
+                    <h5 class="card-title mt-3">Importar Demandas</h5>
+                    <p class="card-text">Cadastre demandas e oportunidades em lote</p>
+                    <a href="{{ url_for('importacao.download_template', tipo='demandas') }}" class="btn btn-outline-success btn-sm mb-2">
+                        <i class="bi bi-download"></i> Baixar Template
+                    </a>
+                    <br>
+                    <a href="{{ url_for('importacao.importar_demandas') }}" class="btn btn-success">
+                        <i class="bi bi-upload"></i> Importar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <h5><i class="bi bi-info-circle"></i> Como funciona?</h5>
+        <ol>
+            <li>Baixe o template Excel correspondente ao tipo de dado que deseja importar</li>
+            <li>Preencha a planilha com os dados seguindo o formato do exemplo</li>
+            <li>Salve o arquivo e faça o upload através do botão "Importar"</li>
+            <li>O sistema validará os dados e importará as informações válidas</li>
+        </ol>
+        <p class="mb-0"><strong>Dica:</strong> Certifique-se de que CNPJs e emails estejam corretos para evitar erros na importação.</p>
+    </div>
+</div>
+{% endblock %}

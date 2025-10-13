@@ -56,8 +56,19 @@
                         <a class="nav-link" href="{{ url_for('demandas.lista') }}"><i class="bi bi-clipboard-data"></i> Demandas</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('carteira.index') }}"><i class="bi bi-briefcase"></i> Carteira</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('formularios.lista') }}"><i class="bi bi-file-text"></i> Formulários</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('relatorios.index') }}"><i class="bi bi-file-earmark-bar-graph"></i> Relatórios</a>
                     </li>
+                    {% if current_user.is_atendente() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('importacao.index') }}"><i class="bi bi-file-earmark-arrow-up"></i> Importar</a>
+                    </li>
+                    {% endif %}
                     {% if current_user.is_admin() %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin.usuarios') }}"><i class="bi bi-people"></i> Usuários</a>

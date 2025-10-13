@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Resposta do Formulário - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('formularios.lista') }}">Formulários</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('formularios.detalhes', id=resposta.formulario_id) }}">{{ resposta.formulario.titulo }}</a></li>
+            <li class="breadcrumb-item active">Resposta</li>
+        </ol>
+    </nav>
+
+    <h2><i class="bi bi-inbox"></i> Detalhes da Resposta</h2>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Informações da Resposta</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Data/Hora:</strong> {{ resposta.data_resposta.strftime('%d/%m/%Y %H:%M') }}</p>
+                    <p><strong>IP:</strong> {{ resposta.ip_address }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Processado:</strong> 
+                        {% if resposta.processado %}
+                        <span class="badge bg-success">Sim</span>
+                        {% else %}
+                        <span class="badge bg-warning">Não</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>User Agent:</strong> <small>{{ resposta.user_agent or 'N/A' }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Dados Enviados</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in resposta.dados_json.items() %}
+                    <tr>
+                        <td><strong>{{ key }}</strong></td>
+                        <td>{{ value }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('formularios.detalhes', id=resposta.formulario_id) }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+</div>
+{% endblock %}

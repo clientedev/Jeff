@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}{{ empresa.nome }} - Carteira - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('carteira.index') }}">Carteira</a></li>
+                    <li class="breadcrumb-item active">{{ empresa.nome }}</li>
+                </ol>
+            </nav>
+            <h2><i class="fas fa-building text-primary"></i> {{ empresa.nome }}</h2>
+            <p class="text-muted">{{ empresa.segmento }} - {{ empresa.cidade }}/{{ empresa.uf }}</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h6><i class="fas fa-calendar-check"></i> Visitas</h6>
+                    <h2>{{ visitas|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h6><i class="fas fa-tasks"></i> Demandas</h6>
+                    <h2>{{ demandas|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h6><i class="fas fa-lightbulb"></i> Inovações</h6>
+                    <h2>{{ inovacoes|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h6><i class="fas fa-clipboard-check"></i> Diagnósticos</h6>
+                    <h2>{{ diagnosticos|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Demandas por Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="demandasChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Inovações por Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="inovacoesChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-stream"></i> Timeline de Atividades</h5>
+        </div>
+        <div class="card-body">
+            {% if timeline %}
+            <div class="timeline">
+                {% for item in timeline %}
+                <div class="timeline-item mb-4">
+                    <div class="row">
+                        <div class="col-md-2 text-end">
+                            <strong>{{ item.data.strftime('%d/%m/%Y') }}</strong><br>
+                            <small class="text-muted">{{ item.responsavel }}</small>
+                        </div>
+                        <div class="col-md-1 text-center">
+                            <div class="timeline-badge 
+                                {% if item.tipo == 'visita' %}bg-info
+                                {% elif item.tipo == 'demanda' %}bg-primary
+                                {% elif item.tipo == 'inovacao' %}bg-success
+                                {% endif %}">
+                                {% if item.tipo == 'visita' %}<i class="fas fa-calendar-check text-white"></i>
+                                {% elif item.tipo == 'demanda' %}<i class="fas fa-tasks text-white"></i>
+                                {% elif item.tipo == 'inovacao' %}<i class="fas fa-lightbulb text-white"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ item.titulo }}</h6>
+                                    <p class="card-text">{{ item.descricao or 'Sem descrição' }}</p>
+                                    <span class="badge 
+                                        {% if item.status in ['Realizada', 'Concluída', 'Concluída com Sucesso'] %}bg-success
+                                        {% elif item.status in ['Em andamento', 'Em Implementação'] %}bg-warning
+                                        {% elif item.status == 'Cancelada' %}bg-danger
+                                        {% else %}bg-secondary
+                                        {% endif %}">
+                                        {{ item.status }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-history fa-3x mb-3"></i><br>
+                Nenhuma atividade registrada ainda.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline-badge {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const demandasData = {
+    labels: [{% for status, count in demandas_por_status %}'{{ status }}',{% endfor %}],
+    datasets: [{
+        data: [{% for status, count in demandas_por_status %}{{ count }},{% endfor %}],
+        backgroundColor: ['#007bff', '#ffc107', '#28a745', '#dc3545', '#6c757d']
+    }]
+};
+
+const inovacoesData = {
+    labels: [{% for status, count in inovacoes_por_status %}'{{ status }}',{% endfor %}],
+    datasets: [{
+        data: [{% for status, count in inovacoes_por_status %}{{ count }},{% endfor %}],
+        backgroundColor: ['#17a2b8', '#28a745', '#ffc107', '#dc3545']
+    }]
+};
+
+new Chart(document.getElementById('demandasChart'), {
+    type: 'doughnut',
+    data: demandasData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+
+new Chart(document.getElementById('inovacoesChart'), {
+    type: 'bar',
+    data: inovacoesData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
+{% endblock %}

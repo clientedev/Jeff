@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if formulario else 'Novo' }} Formul\u00e1rio - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('formularios.lista') }}">Formul\u00e1rios</a></li>
+            <li class="breadcrumb-item active">{{ 'Editar' if formulario else 'Novo' }}</li>
+        </ol>
+    </nav>
+
+    <h2><i class="bi bi-file-text"></i> {{ 'Editar' if formulario else 'Novo' }} Formul\u00e1rio</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">T\u00edtulo *</label>
+                            <input type="text" name="titulo" class="form-control" 
+                                   value="{{ formulario.titulo if formulario else '' }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Descri\u00e7\u00e3o</label>
+                            <textarea name="descricao" class="form-control" rows="3">{{ formulario.descricao if formulario else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Empresa (opcional)</label>
+                            <select name="empresa_id" class="form-select">
+                                <option value="">-- Nenhuma empresa vinculada --</option>
+                                {% for emp in empresas %}
+                                <option value="{{ emp.id }}" 
+                                    {% if formulario and formulario.empresa_id == emp.id %}selected{% endif %}>
+                                    {{ emp.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Ao vincular a uma empresa, as respostas podem atualizar automaticamente os dados da empresa.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Dias de Validade (opcional)</label>
+                            <input type="number" name="dias_validade" class="form-control" 
+                                   min="1" max="365" placeholder="Ex: 30">
+                            <div class="form-text">Deixe em branco para n\u00e3o ter data de expira\u00e7\u00e3o.</div>
+                        </div>
+
+                        {% if formulario %}
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="ativo" class="form-check-input" id="ativo"
+                                   {% if formulario.ativo %}checked{% endif %}>
+                            <label class="form-check-label" for="ativo">
+                                Formul\u00e1rio ativo (aceita novas respostas)
+                            </label>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Salvar Formul\u00e1rio
+                            </button>
+                            <a href="{{ url_for('formularios.lista') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="alert alert-info">
+                <h5><i class="bi bi-info-circle"></i> Como funciona?</h5>
+                <ol class="small">
+                    <li>Crie um formul\u00e1rio com t\u00edtulo e descri\u00e7\u00e3o</li>
+                    <li>Opcionalmente vincule a uma empresa</li>
+                    <li>Copie o link gerado</li>
+                    <li>Envie o link para o cliente</li>
+                    <li>O cliente preenche os dados</li>
+                    <li>Os dados s\u00e3o salvos no sistema</li>
+                    <li>Voc\u00ea pode processar as respostas</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

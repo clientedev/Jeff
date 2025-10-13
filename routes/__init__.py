@@ -7,5 +7,9 @@ visitas_bp = Blueprint('visitas', __name__)
 demandas_bp = Blueprint('demandas', __name__)
 relatorios_bp = Blueprint('relatorios', __name__)
 admin_bp = Blueprint('admin', __name__)
+carteira_bp = Blueprint('carteira', __name__, url_prefix='/carteira')
+importacao_bp = Blueprint('importacao', __name__)
+formularios_bp = Blueprint('formularios', __name__)
+formulario_publico_bp = Blueprint('formulario_publico', __name__)
 
-from routes import auth, dashboard, empresas, visitas, demandas, relatorios, admin
+from routes import auth, dashboard, empresas, visitas, demandas, relatorios, admin, carteira, importacao, formularios, formulario_publico
