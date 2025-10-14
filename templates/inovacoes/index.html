@@ -10,12 +10,17 @@
     </div>
     <div class="col-md-4 text-end">
         {% if current_user.is_atendente() %}
-        <a href="{{ url_for('inovacoes.nova') }}" class="btn btn-senai">
-            <i class="bi bi-plus-circle"></i> Nova Inovação
-        </a>
-        <a href="{{ url_for('inovacoes.atribuir') }}" class="btn btn-outline-primary">
-            <i class="bi bi-person-plus"></i> Atribuir
-        </a>
+        <div class="btn-group">
+            <a href="{{ url_for('inovacoes.nova') }}" class="btn btn-senai">
+                <i class="bi bi-plus-circle"></i> Nova Inovação
+            </a>
+            <a href="{{ url_for('inovacoes.atribuir') }}" class="btn btn-outline-primary">
+                <i class="bi bi-person-plus"></i> Atribuir
+            </a>
+            <a href="{{ url_for('inovacoes.importar') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-file-earmark-arrow-up"></i> Importar
+            </a>
+        </div>
         {% endif %}
     </div>
 </div>

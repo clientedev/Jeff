@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Business Intelligence - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-graph-up"></i> Business Intelligence & Relatorios</h2>
+        </div>
+        <div class="col-auto">
+            <div class="btn-group">
+                <a href="{{ url_for('bi.exportar_excel') }}" class="btn btn-success">
+                    <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                </a>
+                <a href="{{ url_for('bi.exportar_pdf') }}" class="btn btn-danger">
+                    <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col">
+            <form method="GET" class="d-inline-flex">
+                <select name="periodo" class="form-select me-2" style="width: auto;" onchange="this.form.submit()">
+                    <option value="7" {{ 'selected' if periodo == '7' }}>Ultimos 7 dias</option>
+                    <option value="30" {{ 'selected' if periodo == '30' }}>Ultimos 30 dias</option>
+                    <option value="90" {{ 'selected' if periodo == '90' }}>Ultimos 90 dias</option>
+                    <option value="365" {{ 'selected' if periodo == '365' }}>Ultimo ano</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ total_empresas }}</h3>
+                    <small>Total Empresas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ visitas_periodo }}</h3>
+                    <small>Visitas no Periodo</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ inovacoes_periodo }}</h3>
+                    <small>Inovacoes no Periodo</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h3 class="mb-0">R$ {{ "{:,.2f}".format(economia_total) }}</h3>
+                    <small>Economia Total Gerada</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4>{{ consultores_ativos }}</h4>
+                    <small class="text-muted">Consultores Ativos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4>{{ diagnosticos_periodo }}</h4>
+                    <small class="text-muted">Diagnosticos no Periodo</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4>{{ roi_geral|round(1) }}%</h4>
+                    <small class="text-muted">ROI Geral</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4>{{ empresas_ativas }}</h4>
+                    <small class="text-muted">Empresas Ativas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-pie-chart"></i> Empresas por Porte
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPorte"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-geo-alt"></i> Top 10 Estados
+                </div>
+                <div class="card-body">
+                    <canvas id="chartUF"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-list-task"></i> Demandas por Tipo
+                </div>
+                <div class="card-body">
+                    <canvas id="chartDemandaTipo"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-bar-chart"></i> Demandas por Status
+                </div>
+                <div class="card-body">
+                    <canvas id="chartDemandaStatus"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-calendar-event"></i> Evolucao Mensal de Visitas
+                </div>
+                <div class="card-body">
+                    <canvas id="chartEvolucao"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-trophy"></i> Top 10 Consultores (por diagnosticos)
+                </div>
+                <div class="card-body">
+                    <canvas id="chartConsultores"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Empresas por Porte
+new Chart(document.getElementById('chartPorte'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ empresas_por_porte|map(attribute=0)|list|tojson }},
+        datasets: [{
+            data: {{ empresas_por_porte|map(attribute=1)|list|tojson }},
+            backgroundColor: ['#003DA5', '#00A7E1', '#FDB913', '#8BC34A', '#FF9800']
+        }]
+    }
+});
+
+// Estados
+new Chart(document.getElementById('chartUF'), {
+    type: 'bar',
+    data: {
+        labels: {{ empresas_por_uf|map(attribute=0)|list|tojson }},
+        datasets: [{
+            label: 'Empresas',
+            data: {{ empresas_por_uf|map(attribute=1)|list|tojson }},
+            backgroundColor: '#003DA5'
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// Demandas por Tipo
+new Chart(document.getElementById('chartDemandaTipo'), {
+    type: 'pie',
+    data: {
+        labels: {{ demandas_por_tipo|map(attribute=0)|list|tojson }},
+        datasets: [{
+            data: {{ demandas_por_tipo|map(attribute=1)|list|tojson }},
+            backgroundColor: ['#003DA5', '#00A7E1', '#FDB913', '#8BC34A', '#FF9800', '#E91E63']
+        }]
+    }
+});
+
+// Demandas por Status
+new Chart(document.getElementById('chartDemandaStatus'), {
+    type: 'bar',
+    data: {
+        labels: {{ demandas_por_status|map(attribute=0)|list|tojson }},
+        datasets: [{
+            label: 'Quantidade',
+            data: {{ demandas_por_status|map(attribute=1)|list|tojson }},
+            backgroundColor: '#00A7E1'
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// Evolucao Mensal
+new Chart(document.getElementById('chartEvolucao'), {
+    type: 'line',
+    data: {
+        labels: {{ evolucao_mensal|map(attribute=0)|list|tojson }},
+        datasets: [{
+            label: 'Visitas',
+            data: {{ evolucao_mensal|map(attribute=1)|list|tojson }},
+            borderColor: '#003DA5',
+            backgroundColor: 'rgba(0, 61, 165, 0.1)',
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// Top Consultores
+new Chart(document.getElementById('chartConsultores'), {
+    type: 'bar',
+    data: {
+        labels: {{ top_consultores|map(attribute=0)|list|tojson }},
+        datasets: [{
+            label: 'Diagnosticos',
+            data: {{ top_consultores|map(attribute=1)|list|tojson }},
+            backgroundColor: '#FDB913'
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true } }
+    }
+});
+</script>
+{% endblock %}

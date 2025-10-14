@@ -7,7 +7,14 @@
     </div>
     <div class="col-md-4 text-end">
         {% if current_user.is_consultor() %}
-        <a href="{{ url_for('diagnosticos.novo') }}" class="btn btn-senai"><i class="bi bi-plus-circle"></i> Novo Diagnóstico</a>
+        <div class="btn-group">
+            <a href="{{ url_for('diagnosticos.novo') }}" class="btn btn-senai">
+                <i class="bi bi-plus-circle"></i> Novo Diagnóstico
+            </a>
+            <a href="{{ url_for('diagnosticos.importar') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-file-earmark-arrow-up"></i> Importar
+            </a>
+        </div>
         {% endif %}
     </div>
 </div>

@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from config import Config
 from models import db, login_manager
-from routes import auth_bp, dashboard_bp, empresas_bp, visitas_bp, demandas_bp, relatorios_bp, admin_bp, carteira_bp, importacao_bp, formularios_bp, formulario_publico_bp, inovacoes_bp, consultores_bp, diagnosticos_bp, automacoes_bp
+from routes import auth_bp, dashboard_bp, empresas_bp, visitas_bp, demandas_bp, relatorios_bp, admin_bp, carteira_bp, importacao_bp, formularios_bp, formulario_publico_bp, inovacoes_bp, consultores_bp, diagnosticos_bp, automacoes_bp, publico_bp, bi_bp
 import os
 import logging
 
@@ -40,6 +40,8 @@ app.register_blueprint(inovacoes_bp)
 app.register_blueprint(consultores_bp)
 app.register_blueprint(diagnosticos_bp)
 app.register_blueprint(automacoes_bp)
+app.register_blueprint(publico_bp)
+app.register_blueprint(bi_bp)
 
 @app.route('/')
 def index():

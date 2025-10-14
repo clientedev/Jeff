@@ -323,9 +323,13 @@
             </a>
             
             <div class="nav-section-title">Análise</div>
+            <a href="{{ url_for('bi.index') }}" class="{{ 'active' if 'bi' in request.endpoint else '' }}">
+                <i class="bi bi-graph-up"></i>
+                <span>Business Intelligence</span>
+            </a>
             <a href="{{ url_for('relatorios.index') }}" class="{{ 'active' if 'relatorios' in request.endpoint else '' }}">
                 <i class="bi bi-file-earmark-bar-graph"></i>
-                <span>Relatórios & BI</span>
+                <span>Relatórios</span>
             </a>
             
             {% if current_user.is_atendente() %}
