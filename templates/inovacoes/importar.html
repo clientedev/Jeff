@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Inovacoes - SRI SENAI{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-file-earmark-arrow-up"></i> Importar Inovacoes via Excel</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('inovacoes.index') }}">Inovacoes</a></li>
+                    <li class="breadcrumb-item active">Importar</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Upload do Arquivo Excel</h5>
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Arquivo Excel (.xlsx ou .xls)</label>
+                            <input type="file" class="form-control" name="arquivo" accept=".xlsx,.xls" required>
+                            <small class="text-muted">Selecione um arquivo Excel com os dados das atribuicoes de inovacoes</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-upload"></i> Importar
+                        </button>
+                        <a href="{{ url_for('inovacoes.atribuicoes') }}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-info-circle"></i> Formato do Arquivo</h5>
+                    <p>O arquivo Excel deve conter as seguintes colunas (na ordem):</p>
+                    <ol class="small">
+                        <li><strong>Empresa</strong> - Nome da empresa</li>
+                        <li><strong>Inovacao</strong> - Nome da ferramenta lean</li>
+                        <li><strong>Data Inicio</strong> - Data de inicio (opcional)</li>
+                        <li><strong>Status</strong> - Planejada/Em andamento/Concluida</li>
+                        <li><strong>Investimento</strong> - Valor investido (R$)</li>
+                        <li><strong>Economia</strong> - Economia gerada (R$)</li>
+                    </ol>
+                    <hr>
+                    <h6>Exemplo:</h6>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Inovacao</th>
+                                <th>Data Inicio</th>
+                                <th>Status</th>
+                                <th>Investimento</th>
+                                <th>Economia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Industria ABC</td>
+                                <td>5S</td>
+                                <td>2024-01-15</td>
+                                <td>Concluida</td>
+                                <td>5000</td>
+                                <td>15000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

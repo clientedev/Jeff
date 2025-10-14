@@ -1,81 +1,244 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-building"></i> Empresas</h2>
-    {% if current_user.is_atendente() %}
-    <a href="{{ url_for('empresas.nova') }}" class="btn btn-senai">
-        <i class="bi bi-plus-circle"></i> Nova Empresa
-    </a>
-    {% endif %}
-</div>
-
-<form method="GET" class="mb-3">
-    <div class="input-group">
-        <input type="text" class="form-control" name="busca" placeholder="Buscar por nome, CNPJ, cidade ou segmento..." value="{{ busca }}">
-        <button class="btn btn-senai" type="submit"><i class="bi bi-search"></i> Buscar</button>
-    </div>
-</form>
-
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>CNPJ</th>
-                        <th>Cidade/UF</th>
-                        <th>Segmento</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for empresa in empresas.items %}
-                    <tr>
-                        <td>{{ empresa.nome }}</td>
-                        <td>{{ empresa.cnpj }}</td>
-                        <td>{{ empresa.cidade }}/{{ empresa.uf }}</td>
-                        <td>{{ empresa.segmento }}</td>
-                        <td>
-                            <span class="badge bg-{{ 'success' if empresa.status == 'Ativo' else 'secondary' }}">
-                                {{ empresa.status }}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{{ url_for('empresas.detalhes', id=empresa.id) }}" class="btn btn-sm btn-info">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            {% if current_user.is_atendente() %}
-                            <a href="{{ url_for('empresas.editar', id=empresa.id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center">Nenhuma empresa encontrada</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-building"></i> Carteira de Clientes</h2>
         </div>
-        
-        {% if empresas.pages > 1 %}
-        <nav>
-            <ul class="pagination">
-                {% for page_num in empresas.iter_pages() %}
-                    {% if page_num %}
-                        <li class="page-item {{ 'active' if page_num == empresas.page }}">
-                            <a class="page-link" href="?page={{ page_num }}&busca={{ busca }}">{{ page_num }}</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </nav>
-        {% endif %}
+        <div class="col-auto">
+            {% if current_user.is_atendente() %}
+            <a href="{{ url_for('empresas.nova') }}" class="btn btn-senai">
+                <i class="bi bi-plus-circle"></i> Nova Empresa
+            </a>
+            <a href="{{ url_for('empresas.importar') }}" class="btn btn-outline-primary">
+                <i class="bi bi-file-earmark-arrow-up"></i> Importar Excel
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ total_empresas }}</h3>
+                    <small>Total de Empresas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ empresas_ativas }}</h3>
+                    <small>Empresas Ativas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ por_porte|length }}</h3>
+                    <small>Portes Diferentes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h3 class="mb-0">{{ por_uf|length }}</h3>
+                    <small>Estados Atendidos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-funnel"></i> Filtros Avancados
+        </div>
+        <div class="card-body">
+            <form method="GET">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Buscar</label>
+                        <input type="text" class="form-control" name="busca" placeholder="Nome, CNPJ, cidade..." value="{{ busca }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Porte</label>
+                        <select class="form-select" name="porte">
+                            <option value="">Todos</option>
+                            {% for p in todos_portes %}
+                            <option value="{{ p }}" {{ 'selected' if p == porte }}>{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="">Todos</option>
+                            <option value="Ativo" {{ 'selected' if status == 'Ativo' }}>Ativo</option>
+                            <option value="Inativo" {{ 'selected' if status == 'Inativo' }}>Inativo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">UF</label>
+                        <select class="form-select" name="uf">
+                            <option value="">Todos</option>
+                            {% for u in todos_ufs %}
+                            <option value="{{ u }}" {{ 'selected' if u == uf }}>{{ u }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Segmento</label>
+                        <input type="text" class="form-control" name="segmento" placeholder="Ex: Metalurgia" value="{{ segmento }}">
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                        <a href="{{ url_for('empresas.lista') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Limpar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-pie-chart"></i> Empresas por Porte
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPorPorte"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-geo-alt"></i> Top 10 Estados
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPorUF"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CNPJ</th>
+                            <th>Cidade/UF</th>
+                            <th>Segmento</th>
+                            <th>Porte</th>
+                            <th>Status</th>
+                            <th>Acoes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empresa in empresas.items %}
+                        <tr>
+                            <td><strong>{{ empresa.nome }}</strong></td>
+                            <td>{{ empresa.cnpj }}</td>
+                            <td>{{ empresa.cidade }}/{{ empresa.uf }}</td>
+                            <td>{{ empresa.segmento }}</td>
+                            <td>
+                                <span class="badge bg-secondary">{{ empresa.porte }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if empresa.status == 'Ativo' else 'secondary' }}">
+                                    {{ empresa.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('empresas.detalhes', id=empresa.id) }}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if current_user.is_atendente() %}
+                                <a href="{{ url_for('empresas.editar', id=empresa.id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">Nenhuma empresa encontrada</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if empresas.pages > 1 %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% for page_num in empresas.iter_pages() %}
+                        {% if page_num %}
+                            <li class="page-item {{ 'active' if page_num == empresas.page }}">
+                                <a class="page-link" href="?page={{ page_num }}&busca={{ busca }}&porte={{ porte }}&status={{ status }}&uf={{ uf }}&segmento={{ segmento }}">{{ page_num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Grafico por Porte
+const ctxPorte = document.getElementById('chartPorPorte');
+new Chart(ctxPorte, {
+    type: 'doughnut',
+    data: {
+        labels: {{ por_porte|map(attribute=0)|list|tojson }},
+        datasets: [{
+            data: {{ por_porte|map(attribute=1)|list|tojson }},
+            backgroundColor: ['#003DA5', '#00A7E1', '#FDB913', '#8BC34A', '#FF9800']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+
+// Grafico por UF
+const ctxUF = document.getElementById('chartPorUF');
+new Chart(ctxUF, {
+    type: 'bar',
+    data: {
+        labels: {{ por_uf|map(attribute=0)|list|tojson }},
+        datasets: [{
+            label: 'Empresas',
+            data: {{ por_uf|map(attribute=1)|list|tojson }},
+            backgroundColor: '#003DA5'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
 {% endblock %}

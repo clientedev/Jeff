@@ -6,6 +6,7 @@ from models.empresa import Empresa
 from models.user import User
 from sqlalchemy import func
 from datetime import datetime
+import openpyxl
 
 diagnosticos_bp = Blueprint('diagnosticos', __name__, url_prefix='/diagnosticos')
 
@@ -134,3 +135,89 @@ def atualizar_melhoria(id):
     db.session.commit()
     flash('Melhoria atualizada com sucesso!', 'success')
     return redirect(url_for('diagnosticos.detalhes', id=diagnostico.id))
+
+@diagnosticos_bp.route('/importar', methods=['GET', 'POST'])
+@login_required
+def importar():
+    if not current_user.is_consultor():
+        flash('Apenas consultores podem importar diagnosticos.', 'danger')
+        return redirect(url_for('diagnosticos.index'))
+    
+    if request.method == 'POST':
+        if 'arquivo' not in request.files:
+            flash('Nenhum arquivo foi enviado.', 'danger')
+            return redirect(url_for('diagnosticos.importar'))
+        
+        arquivo = request.files['arquivo']
+        if arquivo.filename == '':
+            flash('Nenhum arquivo selecionado.', 'danger')
+            return redirect(url_for('diagnosticos.importar'))
+        
+        if not arquivo.filename.endswith(('.xlsx', '.xls')):
+            flash('Formato invalido. Use arquivos Excel (.xlsx ou .xls).', 'danger')
+            return redirect(url_for('diagnosticos.importar'))
+        
+        try:
+            wb = openpyxl.load_workbook(arquivo)
+            ws = wb.active
+            
+            importados = 0
+            erros = []
+            
+            for row_idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
+                try:
+                    empresa_nome = row[0]
+                    area = row[1]
+                    data_diagnostico = row[2]
+                    situacao_atual = row[3]
+                    pontos_fortes = row[4]
+                    oportunidades = row[5]
+                    riscos = row[6]
+                    recomendacoes = row[7]
+                    nota_geral = int(row[8]) if row[8] else 5
+                    
+                    if not empresa_nome or not area:
+                        erros.append(f'Linha {row_idx}: empresa e area sao obrigatorios')
+                        continue
+                    
+                    empresa = Empresa.query.filter_by(nome=empresa_nome).first()
+                    if not empresa:
+                        erros.append(f'Linha {row_idx}: empresa "{empresa_nome}" nao encontrada')
+                        continue
+                    
+                    diagnostico = Diagnostico(
+                        empresa_id=empresa.id,
+                        consultor_id=current_user.id,
+                        area=area,
+                        data_diagnostico=data_diagnostico if isinstance(data_diagnostico, datetime) else datetime.now().date(),
+                        situacao_atual=situacao_atual,
+                        pontos_fortes=pontos_fortes,
+                        oportunidades_melhoria=oportunidades,
+                        riscos_identificados=riscos,
+                        recomendacoes=recomendacoes,
+                        nota_geral=nota_geral
+                    )
+                    db.session.add(diagnostico)
+                    importados += 1
+                    
+                except Exception as e:
+                    erros.append(f'Linha {row_idx}: {str(e)}')
+            
+            db.session.commit()
+            
+            msg = f'{importados} diagnosticos importados com sucesso!'
+            if erros:
+                msg += f' {len(erros)} erros encontrados.'
+            flash(msg, 'success' if not erros else 'warning')
+            
+            if erros:
+                for erro in erros[:5]:
+                    flash(erro, 'danger')
+            
+            return redirect(url_for('diagnosticos.index'))
+            
+        except Exception as e:
+            flash(f'Erro ao processar arquivo: {str(e)}', 'danger')
+            return redirect(url_for('diagnosticos.importar'))
+    
+    return render_template('diagnosticos/importar.html')

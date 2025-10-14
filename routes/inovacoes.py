@@ -208,3 +208,88 @@ def api_stats():
     return jsonify({
         'por_status': [{'status': s[0], 'count': s[1]} for s in por_status]
     })
+
+@inovacoes_bp.route('/importar', methods=['GET', 'POST'])
+@login_required
+def importar():
+    if not current_user.is_atendente():
+        flash('Apenas atendentes podem importar inovacoes.', 'danger')
+        return redirect(url_for('inovacoes.index'))
+    
+    if request.method == 'POST':
+        if 'arquivo' not in request.files:
+            flash('Nenhum arquivo foi enviado.', 'danger')
+            return redirect(url_for('inovacoes.importar'))
+        
+        arquivo = request.files['arquivo']
+        if arquivo.filename == '':
+            flash('Nenhum arquivo selecionado.', 'danger')
+            return redirect(url_for('inovacoes.importar'))
+        
+        if not arquivo.filename.endswith(('.xlsx', '.xls')):
+            flash('Formato invalido. Use arquivos Excel (.xlsx ou .xls).', 'danger')
+            return redirect(url_for('inovacoes.importar'))
+        
+        try:
+            wb = openpyxl.load_workbook(arquivo)
+            ws = wb.active
+            
+            importados = 0
+            erros = []
+            
+            for row_idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
+                try:
+                    empresa_nome = row[0]
+                    inovacao_nome = row[1]
+                    data_inicio = row[2]
+                    status = row[3] if row[3] else 'Planejada'
+                    investimento = float(row[4]) if row[4] else 0
+                    economia = float(row[5]) if row[5] else 0
+                    
+                    if not empresa_nome or not inovacao_nome:
+                        erros.append(f'Linha {row_idx}: empresa e inovacao sao obrigatorios')
+                        continue
+                    
+                    empresa = Empresa.query.filter_by(nome=empresa_nome).first()
+                    if not empresa:
+                        erros.append(f'Linha {row_idx}: empresa "{empresa_nome}" nao encontrada')
+                        continue
+                    
+                    inovacao = Inovacao.query.filter_by(nome=inovacao_nome).first()
+                    if not inovacao:
+                        erros.append(f'Linha {row_idx}: inovacao "{inovacao_nome}" nao encontrada')
+                        continue
+                    
+                    atribuicao = InovacaoEmpresa(
+                        empresa_id=empresa.id,
+                        inovacao_id=inovacao.id,
+                        consultor_id=current_user.id,
+                        data_inicio=data_inicio if isinstance(data_inicio, datetime) else datetime.now().date(),
+                        status=status,
+                        investimento=investimento,
+                        economia_gerada=economia
+                    )
+                    db.session.add(atribuicao)
+                    importados += 1
+                    
+                except Exception as e:
+                    erros.append(f'Linha {row_idx}: {str(e)}')
+            
+            db.session.commit()
+            
+            msg = f'{importados} inovacoes importadas com sucesso!'
+            if erros:
+                msg += f' {len(erros)} erros encontrados.'
+            flash(msg, 'success' if not erros else 'warning')
+            
+            if erros:
+                for erro in erros[:5]:
+                    flash(erro, 'danger')
+            
+            return redirect(url_for('inovacoes.atribuicoes'))
+            
+        except Exception as e:
+            flash(f'Erro ao processar arquivo: {str(e)}', 'danger')
+            return redirect(url_for('inovacoes.importar'))
+    
+    return render_template('inovacoes/importar.html')

@@ -10,8 +10,14 @@ import os
 @empresas_bp.route('/empresas')
 @login_required
 def lista():
+    from sqlalchemy import func
+    
     page = request.args.get('page', 1, type=int)
     busca = request.args.get('busca', '')
+    porte = request.args.get('porte', '')
+    status = request.args.get('status', '')
+    uf = request.args.get('uf', '')
+    segmento = request.args.get('segmento', '')
     
     query = Empresa.query
     
@@ -25,8 +31,51 @@ def lista():
             )
         )
     
+    if porte:
+        query = query.filter(Empresa.porte == porte)
+    
+    if status:
+        query = query.filter(Empresa.status == status)
+    
+    if uf:
+        query = query.filter(Empresa.uf == uf)
+    
+    if segmento:
+        query = query.filter(Empresa.segmento.ilike(f'%{segmento}%'))
+    
     empresas = query.order_by(Empresa.nome).paginate(page=page, per_page=20, error_out=False)
-    return render_template('empresas/lista.html', empresas=empresas, busca=busca)
+    
+    total_empresas = Empresa.query.count()
+    empresas_ativas = Empresa.query.filter_by(status='Ativo').count()
+    
+    por_porte = db.session.query(
+        Empresa.porte,
+        func.count(Empresa.id)
+    ).group_by(Empresa.porte).all()
+    
+    por_uf = db.session.query(
+        Empresa.uf,
+        func.count(Empresa.id)
+    ).group_by(Empresa.uf).order_by(func.count(Empresa.id).desc()).limit(10).all()
+    
+    todos_ufs = db.session.query(Empresa.uf).distinct().order_by(Empresa.uf).all()
+    todos_portes = db.session.query(Empresa.porte).distinct().order_by(Empresa.porte).all()
+    todos_segmentos = db.session.query(Empresa.segmento).distinct().order_by(Empresa.segmento).all()
+    
+    return render_template('empresas/lista.html', 
+                         empresas=empresas, 
+                         busca=busca,
+                         porte=porte,
+                         status=status,
+                         uf=uf,
+                         segmento=segmento,
+                         total_empresas=total_empresas,
+                         empresas_ativas=empresas_ativas,
+                         por_porte=por_porte,
+                         por_uf=por_uf,
+                         todos_ufs=[u[0] for u in todos_ufs if u[0]],
+                         todos_portes=[p[0] for p in todos_portes if p[0]],
+                         todos_segmentos=[s[0] for s in todos_segmentos if s[0]])
 
 @empresas_bp.route('/empresas/nova', methods=['GET', 'POST'])
 @login_required
