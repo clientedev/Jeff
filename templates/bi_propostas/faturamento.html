@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}BI - Faturamento{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-dollar-sign"></i> Dashboard de Faturamento</h2>
+            <a href="{{ url_for('bi_propostas.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5>Total Faturamento</h5>
+                    <h2>{{ faturamento_total|currency }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5>Realizado</h5>
+                    <h2>{{ faturamento_realizado|currency }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h5>Pendente</h5>
+                    <h2>{{ faturamento_pendente|currency }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> Faturamento por Mês</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartFaturamentoMensal"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie"></i> Por Tipo</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartFaturamentoTipo"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list"></i> Faturamento por Tipo - Detalhes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Quantidade</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tipo, total, qtd in faturamento_por_tipo %}
+                                <tr>
+                                    <td>{{ tipo }}</td>
+                                    <td><span class="badge bg-primary">{{ qtd }}</span></td>
+                                    <td class="text-success fw-bold">{{ total|currency }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+const ctxMensal = document.getElementById('chartFaturamentoMensal').getContext('2d');
+new Chart(ctxMensal, {
+    type: 'bar',
+    data: {
+        labels: {{ ["%d/%d"|format(item.mes, item.ano) for item in faturamento_por_mes]|tojson }},
+        datasets: [{
+            label: 'Faturamento (R$)',
+            data: {{ [item.total for item in faturamento_por_mes]|tojson }},
+            backgroundColor: '#198754'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'R$ ' + value.toLocaleString('pt-BR');
+                    }
+                }
+            }
+        }
+    }
+});
+
+const ctxTipo = document.getElementById('chartFaturamentoTipo').getContext('2d');
+new Chart(ctxTipo, {
+    type: 'pie',
+    data: {
+        labels: {{ [item[0] for item in faturamento_por_tipo]|tojson }},
+        datasets: [{
+            data: {{ [item[1] for item in faturamento_por_tipo]|tojson }},
+            backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6c757d']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+</script>
+{% endblock %}

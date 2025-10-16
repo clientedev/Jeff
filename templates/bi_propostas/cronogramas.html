@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}BI - Cronogramas{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-calendar-alt"></i> Cronogramas e Prazos</h2>
+            <a href="{{ url_for('bi_propostas.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-warning">
+                <div class="card-header bg-warning">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Propostas com Término Próximo (30 dias)</h5>
+                </div>
+                <div class="card-body">
+                    {% if propostas_proximas %}
+                    <div class="list-group">
+                        {% for proposta in propostas_proximas %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ proposta.empresa_nome }}</strong>
+                                <span class="badge bg-warning">{{ proposta.data_termino.strftime('%d/%m/%Y') }}</span>
+                            </div>
+                            <small class="text-muted">{{ proposta.numero_proposta }} - {{ proposta.solucao|truncate(50) }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Nenhuma proposta com término próximo</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5><i class="fas fa-times-circle"></i> Propostas Atrasadas</h5>
+                </div>
+                <div class="card-body">
+                    {% if propostas_atrasadas %}
+                    <div class="list-group">
+                        {% for proposta in propostas_atrasadas %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ proposta.empresa_nome }}</strong>
+                                <span class="badge bg-danger">{{ proposta.data_termino.strftime('%d/%m/%Y') }}</span>
+                            </div>
+                            <small class="text-muted">{{ proposta.numero_proposta }} - {{ proposta.solucao|truncate(50) }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Nenhuma proposta atrasada</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-stream"></i> Timeline de Propostas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Proposta</th>
+                                    <th>Empresa</th>
+                                    <th>Início</th>
+                                    <th>Término</th>
+                                    <th>Duração</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for proposta in propostas_timeline %}
+                                <tr>
+                                    <td>{{ proposta.numero_proposta }}</td>
+                                    <td>{{ proposta.empresa_nome }}</td>
+                                    <td>{{ proposta.data_inicio.strftime('%d/%m/%Y') if proposta.data_inicio else '-' }}</td>
+                                    <td>{{ proposta.data_termino.strftime('%d/%m/%Y') if proposta.data_termino else '-' }}</td>
+                                    <td>
+                                        {% if proposta.data_inicio and proposta.data_termino %}
+                                        {{ (proposta.data_termino - proposta.data_inicio).days }} dias
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if proposta.status == 'Concluída' %}success{% elif proposta.status == 'Em andamento' %}primary{% else %}secondary{% endif %}">
+                                            {{ proposta.status or 'N/A' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

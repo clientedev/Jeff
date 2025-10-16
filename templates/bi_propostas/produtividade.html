@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}BI - Produtividade{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-line"></i> Produtividade por Consultor</h2>
+            <a href="{{ url_for('bi_propostas.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-users"></i> Produtividade dos Consultores</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Consultor</th>
+                                    <th>Horas Trabalhadas</th>
+                                    <th>Horas Planejadas</th>
+                                    <th>Produtividade Média</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prod in produtividades %}
+                                <tr>
+                                    <td>{{ prod.consultor }}</td>
+                                    <td>{{ prod.horas_trabalhadas|int }} h</td>
+                                    <td>{{ prod.horas_planejadas|int }} h</td>
+                                    <td>
+                                        <span class="badge bg-success">{{ "%.1f"|format(prod.produtividade_media or 0) }}%</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-calendar"></i> Produtividade Mensal</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartProdutividadeMensal"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+const ctx = document.getElementById('chartProdutividadeMensal').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ ["%d/%d"|format(item.mes, item.ano) for item in produtividade_mensal]|tojson }},
+        datasets: [{
+            label: 'Produtividade Média (%)',
+            data: {{ [item.produtividade_media for item in produtividade_mensal]|tojson }},
+            borderColor: '#198754',
+            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

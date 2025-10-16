@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}BI - Dashboard de Propostas{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-line"></i> Business Intelligence - Dashboard de Propostas</h2>
+            <p class="text-muted">Visão geral de propostas, contratos e indicadores</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5><i class="fas fa-file-alt"></i> Total de Propostas</h5>
+                    <h2>{{ total_propostas }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5><i class="fas fa-play-circle"></i> Propostas Ativas</h5>
+                    <h2>{{ propostas_ativas }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5><i class="fas fa-check-circle"></i> Concluídas</h5>
+                    <h2>{{ propostas_concluidas }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5><i class="fas fa-clock"></i> Total Horas</h5>
+                    <h2>{{ total_horas|int }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="fas fa-dollar-sign"></i> Faturamento Realizado</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="text-success">{{ total_faturamento|currency }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5><i class="fas fa-hourglass-half"></i> Faturamento Previsto</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="text-warning">{{ faturamento_previsto|currency }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie"></i> Propostas por Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartStatus"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> Propostas por Porte</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPorte"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-map-marker-alt"></i> Top 10 ERs por Número de Propostas</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartER"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-users"></i> Top 10 Consultores</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Consultor</th>
+                                    <th>Número de Propostas</th>
+                                    <th>Total de Horas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for consultor, total, horas in propostas_por_consultor %}
+                                <tr>
+                                    <td>{{ consultor }}</td>
+                                    <td><span class="badge bg-primary">{{ total }}</span></td>
+                                    <td><span class="badge bg-info">{{ horas|int }} h</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 mb-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('bi_propostas.produtividade') }}" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-chart-line"></i> Ver Produtividade
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('bi_propostas.faturamento') }}" class="btn btn-success btn-lg w-100">
+                <i class="fas fa-dollar-sign"></i> Ver Faturamento
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('bi_propostas.cronogramas') }}" class="btn btn-info btn-lg w-100">
+                <i class="fas fa-calendar-alt"></i> Ver Cronogramas
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+const ctxStatus = document.getElementById('chartStatus').getContext('2d');
+new Chart(ctxStatus, {
+    type: 'pie',
+    data: {
+        labels: {{ [item[0] for item in propostas_por_status]|tojson }},
+        datasets: [{
+            data: {{ [item[1] for item in propostas_por_status]|tojson }},
+            backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6c757d', '#0dcaf0']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+
+const ctxPorte = document.getElementById('chartPorte').getContext('2d');
+new Chart(ctxPorte, {
+    type: 'doughnut',
+    data: {
+        labels: {{ [item[0] for item in propostas_por_porte]|tojson }},
+        datasets: [{
+            data: {{ [item[1] for item in propostas_por_porte]|tojson }},
+            backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6c757d']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+
+const ctxER = document.getElementById('chartER').getContext('2d');
+new Chart(ctxER, {
+    type: 'bar',
+    data: {
+        labels: {{ [item[0] for item in propostas_por_er]|tojson }},
+        datasets: [{
+            label: 'Número de Propostas',
+            data: {{ [item[1] for item in propostas_por_er]|tojson }},
+            backgroundColor: '#0d6efd'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

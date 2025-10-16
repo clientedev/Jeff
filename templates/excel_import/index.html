@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Importação de Excel{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-file-excel"></i> Importação de Dados via Excel</h2>
+            <p class="text-muted">Faça upload de planilhas Excel para importar dados automaticamente no sistema</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-upload"></i> Upload de Arquivo</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('excel_import.upload') }}" enctype="multipart/form-data">
+                        {{ csrf_token() }}
+                        
+                        <div class="mb-3">
+                            <label for="tipo_importacao" class="form-label">Tipo de Importação</label>
+                            <select class="form-select" id="tipo_importacao" name="tipo_importacao" required>
+                                <option value="">Selecione o tipo...</option>
+                                <option value="cronograma">Cronograma - Propostas e Empresas</option>
+                                <option value="produtividade">Produtividade de Consultores</option>
+                                <option value="consideracoes">Considerações e Resumo</option>
+                                <option value="faturamento">Faturamento</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Arquivo Excel (.xlsx ou .xls)</label>
+                            <input type="file" class="form-control" id="file" name="file" accept=".xlsx,.xls" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Importar Dados
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Importação Automática</h5>
+                </div>
+                <div class="card-body">
+                    <p>Importar automaticamente todos os dados das planilhas anexadas:</p>
+                    <a href="{{ url_for('excel_import.auto_import') }}" class="btn btn-success">
+                        <i class="fas fa-magic"></i> Importar Tudo Automaticamente
+                    </a>
+                    <p class="text-muted mt-2 small">
+                        <i class="fas fa-info-circle"></i> Isso irá importar dados de:
+                        <br>• Cronograma 2.0 (propostas, cronogramas, produtividade)
+                        <br>• Controle Geral 3.0 (contratos, SGT, relatórios)
+                        <br>• Considerações (resumo, faturamento)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-question-circle"></i> Como Usar</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Tipos de Importação:</h6>
+                    <ul class="small">
+                        <li><strong>Cronograma:</strong> Importa propostas, empresas, CNPJ, consultores, datas</li>
+                        <li><strong>Produtividade:</strong> Importa horas trabalhadas, produtividade por consultor</li>
+                        <li><strong>Considerações:</strong> Importa resumo de programas, etapas, tipos</li>
+                        <li><strong>Faturamento:</strong> Importa valores, datas de faturamento, status</li>
+                    </ul>
+
+                    <h6 class="mt-3">Formatos Esperados:</h6>
+                    <p class="small">
+                        As planilhas devem ter as abas corretas:
+                        <br>• <code>CONSULTA INFO.</code> para propostas
+                        <br>• <code>PRODUTIVIDADE</code> para produtividade
+                        <br>• <code>RESUMO</code> para considerações
+                        <br>• <code>FATURAMENTO</code> para faturamento
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Atenção</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-0">
+                        • Dados duplicados serão atualizados<br>
+                        • Novos dados serão inseridos<br>
+                        • Verifique o formato antes de importar<br>
+                        • Faça backup antes de grandes importações
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
