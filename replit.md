@@ -214,8 +214,62 @@ O sistema já está configurado e rodando automaticamente via workflow:
 ## Data de Criação
 13 de Outubro de 2025
 
+## Sistema de Importação e BI de Propostas (Versão 3.0)
+
+### Novos Módulos Implementados:
+
+**1. Modelos de Dados para Gestão de Consultoria**:
+- ✅ Modelo de Propostas (número, empresa, consultor, solução, datas, valores)
+- ✅ Modelo de Cronograma de Atividades (detalhamento de horas por atividade)
+- ✅ Modelo de Produtividade (controle de horas trabalhadas por consultor)
+- ✅ Modelo de Faturamento (controle financeiro e faturamento)
+- ✅ Modelo de Controle SGT (Sistema de Gestão SENAI)
+- ✅ Modelo de Relatório SEBRAE
+- ✅ Modelo de Prospecção (novos clientes)
+- ✅ Modelo de Follow-Up (acompanhamento pós-venda)
+
+**2. Sistema de Importação de Excel** ✅:
+- Importação automática de múltiplas planilhas Excel
+- Suporte para CRONOGRAMA 2.0 (aba CONSULTA INFO.)
+- Suporte para CONTROLE GERAL (múltiplas abas)
+- Suporte para CONSIDERAÇÕES (resumo e faturamento)
+- Importação idempotente (pode ser executada múltiplas vezes sem erros)
+- Lógica de upsert (insert ou update conforme necessário)
+- Validação e tratamento de erros robusto
+- Interface web para upload manual de arquivos
+
+**3. Dashboards de Business Intelligence** ✅:
+- Dashboard de Propostas: visão geral, status, por consultor
+- Dashboard de Produtividade: horas trabalhadas, eficiência
+- Dashboard de Faturamento: valores, previsões, realizado vs previsto
+- Dashboard de Cronogramas: linha do tempo, atividades
+- Gráficos interativos com Chart.js
+- Filtros dinâmicos por período, consultor, status
+- KPIs em tempo real
+
+**4. Sistema de Relatórios** ✅:
+- Exportação para Excel (XLSX) com formatação
+- Relatórios de propostas completos
+- Relatórios de produtividade por consultor
+- Relatórios de faturamento detalhados
+- Aplicação de filtros nas exportações
+
+**5. Dados Importados** ✅:
+- 229 propostas processadas
+- 173 empresas distintas
+- 19 consultores ativos
+- Múltiplas soluções: Lean Manufacturing, Gestão de Inovação, etc.
+
+### Acessos aos Dashboards:
+- `/bi-propostas/` - Dashboard de Propostas
+- `/bi-propostas/produtividade` - Dashboard de Produtividade
+- `/bi-propostas/faturamento` - Dashboard de Faturamento
+- `/bi-propostas/cronogramas` - Dashboard de Cronogramas
+- `/excel-import/` - Interface de Importação de Excel
+- `/relatorios/excel` - Geração de Relatórios
+
 ## Última Atualização
-14 de Outubro de 2025 - Versão 2.0 completa com todas as funcionalidades implementadas
+16 de Outubro de 2025 - Versão 3.0 com Sistema de Importação Excel e BI de Propostas
 
 ## Desenvolvido para
 SENAI 1.03 - Serviço de Relacionamento com a Indústria
